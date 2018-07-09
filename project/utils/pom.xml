@@ -14,6 +14,7 @@
 		<gson.version>2.8.5</gson.version>
 		<fastjson.version>1.2.47</fastjson.version>
 		<pinyin4j.version>2.5.1</pinyin4j.version>
+		<cron4j.version>2.2.5</cron4j.version>
 	</properties>
 	<dependencyManagement>
 		<dependencies>
@@ -35,6 +36,12 @@
 				<artifactId>pinyin4j</artifactId>
 				<version>${pinyin4j.version}</version>
 			</dependency>
+			<!-- https://mvnrepository.com/artifact/it.sauronsoftware.cron4j/cron4j -->
+			<dependency>
+				<groupId>it.sauronsoftware.cron4j</groupId>
+				<artifactId>cron4j</artifactId>
+				<version>${cron4j.version}</version>
+			</dependency>
 		</dependencies>
 	</dependencyManagement>
 	<dependencies>
@@ -52,6 +59,10 @@
 		<dependency>
 			<groupId>com.belerweb</groupId>
 			<artifactId>pinyin4j</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>it.sauronsoftware.cron4j</groupId>
+			<artifactId>cron4j</artifactId>
 		</dependency>
 	</dependencies>
 </project>
