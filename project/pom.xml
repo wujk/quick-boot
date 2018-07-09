@@ -6,4 +6,7 @@
   <packaging>pom</packaging>
   <name>quick-start</name>
   <description>quick-start</description>
+  <modules>
+  	<module>utils</module>
+  </modules>
 </project>
