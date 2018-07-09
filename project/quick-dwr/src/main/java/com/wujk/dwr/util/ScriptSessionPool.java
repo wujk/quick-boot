@@ -11,6 +11,7 @@ import org.directwebremoting.ScriptSession;
 
 import com.wujk.dwr.beans.ConnectBean;
 import com.wujk.dwr.constant.Constants;
+import com.wujk.utils.pojo.ObjectUtil;
 /**
  * 用来存放scripSession的池子单列模式（利用静态代码块只初始化加载一次保证单例）
  * @author admin
@@ -41,9 +42,9 @@ public class ScriptSessionPool {
 	}
 	
 	public ScriptSession addScriptSession(ScriptSession scriptSession) {
-		if (scriptSession != null) {
+		if (!ObjectUtil.isEmpty(scriptSession)) {
 			String id = (String) scriptSession.getAttribute(Constants.HTTPSESSIONID);
-			if (id != null) {
+			if (!ObjectUtil.isEmpty(id)) {
 				System.out.println("添加scriptSession：" + id);
 				return scriptSessions.putIfAbsent(id, scriptSession);
 			}
@@ -52,9 +53,9 @@ public class ScriptSessionPool {
 	}
 	
 	public ScriptSession removeScriptSession(ScriptSession scriptSession) {
-		if (scriptSession != null) {
+		if (!ObjectUtil.isEmpty(scriptSession)) {
 			String id = (String) scriptSession.getAttribute(Constants.HTTPSESSIONID);
-			if (id != null) {
+			if (!ObjectUtil.isEmpty(id)) {
 				System.out.println("删除scriptSession：" + id);
 				return scriptSessions.remove(id);
 			}

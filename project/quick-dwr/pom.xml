@@ -23,13 +23,21 @@
 		</dependencies>
 	</dependencyManagement>
 	<dependencies>
+	<!-- dwr -->
 		<dependency>
 			<groupId>org.directwebremoting</groupId>
 			<artifactId>dwr</artifactId>
 		</dependency>
+		<!-- servlet -->
 		<dependency>
 			<groupId>javax.servlet</groupId>
 			<artifactId>servlet-api</artifactId>
+		</dependency>
+		<!-- utils -->
+		<dependency>
+			<groupId>com.wujk</groupId>
+			<artifactId>utils</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
 	</dependencies>
 </project>
