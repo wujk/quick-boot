@@ -11,6 +11,7 @@
 	<modules>
 		<module>utils</module>
 		<module>quick-dwr</module>
+		<module>quick-zookeeper</module>
 	</modules>
 	<properties>
 		<java.version>1.8</java.version>
