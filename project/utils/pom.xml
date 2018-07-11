@@ -15,6 +15,9 @@
 		<fastjson.version>1.2.47</fastjson.version>
 		<pinyin4j.version>2.5.1</pinyin4j.version>
 		<cron4j.version>2.2.5</cron4j.version>
+		<jackson.version>2.9.6</jackson.version>
+		<slf4j.version>1.7.25</slf4j.version>
+		<jaxb.version>2.3.0</jaxb.version>
 	</properties>
 	<dependencyManagement>
 		<dependencies>
@@ -42,6 +45,29 @@
 				<artifactId>cron4j</artifactId>
 				<version>${cron4j.version}</version>
 			</dependency>
+			<!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind -->
+			<dependency>
+				<groupId>com.fasterxml.jackson.core</groupId>
+				<artifactId>jackson-databind</artifactId>
+				<version>${jackson.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.fasterxml.jackson.module</groupId>
+				<artifactId>jackson-module-jaxb-annotations</artifactId>
+				<version>${jackson.version}</version>
+			</dependency>
+			<!-- https://mvnrepository.com/artifact/org.slf4j/slf4j-api -->
+			<dependency>
+				<groupId>org.slf4j</groupId>
+				<artifactId>slf4j-api</artifactId>
+				<version>${slf4j.version}</version>
+			</dependency>
+			<!-- https://mvnrepository.com/artifact/javax.xml.bind/jaxb-api -->
+			<dependency>
+				<groupId>javax.xml.bind</groupId>
+				<artifactId>jaxb-api</artifactId>
+				<version>${jaxb.version}</version>
+			</dependency>
 		</dependencies>
 	</dependencyManagement>
 	<dependencies>
@@ -55,6 +81,15 @@
 			<groupId>com.alibaba</groupId>
 			<artifactId>fastjson</artifactId>
 		</dependency>
+		<!-- jackson json 解析 -->
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-databind</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.fasterxml.jackson.module</groupId>
+			<artifactId>jackson-module-jaxb-annotations</artifactId>
+		</dependency>
 		<!-- 拼音工具 -->
 		<dependency>
 			<groupId>com.belerweb</groupId>
@@ -63,6 +98,14 @@
 		<dependency>
 			<groupId>it.sauronsoftware.cron4j</groupId>
 			<artifactId>cron4j</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>javax.xml.bind</groupId>
+			<artifactId>jaxb-api</artifactId>
 		</dependency>
 	</dependencies>
 </project>

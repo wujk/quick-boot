@@ -19,6 +19,7 @@
 		<servlet.version>2.5</servlet.version>
 		<jetty.version>9.4.11.v20180605</jetty.version>
 		<servlet.version>2.5</servlet.version>
+		<commons-lang3>3.7</commons-lang3>
 	</properties>
 	<dependencyManagement>
 		<dependencies>
@@ -28,8 +29,19 @@
 				<version>${servlet.version}</version>
 				<scope>provided</scope>
 			</dependency>
+			<dependency>
+				<groupId>org.apache.commons</groupId>
+				<artifactId>commons-lang3</artifactId>
+				<version>${commons-lang3}</version>
+			</dependency>
 		</dependencies>
 	</dependencyManagement>
+	<dependencies>
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-lang3</artifactId>
+		</dependency>
+	</dependencies>
 	<build>
 		<pluginManagement>
 			<plugins>
