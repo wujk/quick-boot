@@ -10,4 +10,17 @@
 	<artifactId>quick-wechat</artifactId>
 	<name>quick-wechat</name>
 	<description>quick-wechat</description>
+	<dependencies>
+	<!-- utils -->
+		<dependency>
+			<groupId>com.wujk</groupId>
+			<artifactId>utils</artifactId>
+			<version>${utils.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>servlet-api</artifactId>
+		</dependency>
+	</dependencies>
+	
 </project>

@@ -21,6 +21,7 @@
 		<jetty.version>9.4.11.v20180605</jetty.version>
 		<servlet.version>2.5</servlet.version>
 		<commons-lang3>3.7</commons-lang3>
+		<utils.version>0.0.1-SNAPSHOT</utils.version><!-- 自定义的工具类 -->
 	</properties>
 	<dependencyManagement>
 		<dependencies>

@@ -37,7 +37,7 @@
 		<dependency>
 			<groupId>com.wujk</groupId>
 			<artifactId>utils</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
+			<version>${utils.version}</version>
 		</dependency>
 	</dependencies>
 </project>
