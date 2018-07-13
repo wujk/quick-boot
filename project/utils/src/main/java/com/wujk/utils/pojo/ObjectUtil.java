@@ -378,6 +378,15 @@ public class ObjectUtil {
 			e.printStackTrace();
 			return null;
 		}
-	   
-	} 
+	}
+	
+	public static Package[] getPackages() {
+		Package[] pgs = Package.getPackages();
+		return pgs;
+	}
+	
+	public static Package getPackage(String name) {
+		Package pg = Package.getPackage(name);
+		return pg;
+	}
 }
