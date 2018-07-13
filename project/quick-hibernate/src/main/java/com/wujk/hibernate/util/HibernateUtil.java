@@ -7,7 +7,11 @@ import org.hibernate.boot.registry.StandardServiceRegistry;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
+/**
+ * 单数据源
+ * @author CI11951
+ *
+ */
 public class HibernateUtil {
 	
 	private static final Logger logger = LoggerFactory.getLogger(HibernateUtil.class);
@@ -15,9 +19,10 @@ public class HibernateUtil {
 	private static SessionFactory sessionFactory;
 	
 	static {
-		final StandardServiceRegistry registry = new StandardServiceRegistryBuilder().configure().build();
+		final StandardServiceRegistry registry = new StandardServiceRegistryBuilder().configure("cfg/xml/hibernate.cfg.xml").build();
 		try {
-			sessionFactory = new MetadataSources(registry).buildMetadata().buildSessionFactory();
+			MetadataSources metadataSources = new MetadataSources(registry);
+			sessionFactory = metadataSources.buildMetadata().buildSessionFactory();
 		} catch (Exception e) {
 			logger.error(e.getMessage());
 			StandardServiceRegistryBuilder.destroy(registry);
@@ -25,7 +30,7 @@ public class HibernateUtil {
 	}
 	
 	public static void rebuildSessionFactory() {
-		final StandardServiceRegistry registry = new StandardServiceRegistryBuilder().configure().build();
+		final StandardServiceRegistry registry = new StandardServiceRegistryBuilder().configure("cfg/xml/hibernate.cfg.xml").build();
 		try {
 			sessionFactory = new MetadataSources(registry).buildMetadata().buildSessionFactory();
 		} catch (Exception e) {
@@ -77,5 +82,5 @@ public class HibernateUtil {
 			session.getTransaction().rollback();
 		}
 	}
-
+	
 }

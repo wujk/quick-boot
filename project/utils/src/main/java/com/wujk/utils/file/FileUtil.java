@@ -26,6 +26,15 @@ public class FileUtil {
 	}
 	
 	/**
+	 * 
+	 * @param rootResource 根路径开始的全名
+	 * @return
+	 */
+	public static String getPath(String rootResource) {
+		return ClassLoader.getSystemResource(rootResource).getPath();
+	}
+	
+	/**
 	 * 通过类名获取路径
 	 * @param clazz
 	 * @return
