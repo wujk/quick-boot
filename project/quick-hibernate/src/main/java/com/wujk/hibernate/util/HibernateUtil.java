@@ -18,6 +18,8 @@ public class HibernateUtil {
 	
 	private static SessionFactory sessionFactory;
 	
+	private static ThreadLocal<Session> threadLocal = new ThreadLocal<Session>();
+	
 	static {
 		final StandardServiceRegistry registry = new StandardServiceRegistryBuilder().configure("cfg/xml/hibernate.cfg.xml").build();
 		try {
@@ -40,44 +42,58 @@ public class HibernateUtil {
 	}
 	
 	public static Session getSession() {
-		if (sessionFactory == null) {
-			rebuildSessionFactory();
+		Session session = threadLocal.get();
+		if (session == null) {
+			if (sessionFactory == null) {
+				rebuildSessionFactory();
+			}
+			if (sessionFactory == null) {
+				throw new RuntimeException("sessionFactory is null or destory");
+			}
+			session = sessionFactory.openSession();
+			threadLocal.set(session);
 		}
-		if (sessionFactory == null) {
-			throw new RuntimeException("sessionFactory is null or destory");
-		}
-		return sessionFactory.openSession();
+		return session;
 	}
 	
 	public static Session getCurrentSession() {
-		if (sessionFactory == null) {
-			rebuildSessionFactory();
+		Session session = threadLocal.get();
+		if (session == null) {
+			if (sessionFactory == null) {
+				rebuildSessionFactory();
+			}
+			if (sessionFactory == null) {
+				throw new RuntimeException("sessionFactory is null or destory");
+			}
+			session = sessionFactory.getCurrentSession();
+			threadLocal.set(session);
 		}
-		if (sessionFactory == null) {
-			throw new RuntimeException("sessionFactory is null or destory");
-		}
-		return sessionFactory.getCurrentSession();
+		return session;
 	}
 	
-	public static void closeSession(Session session) {
+	public static void closeSession() {
+		Session session = threadLocal.get();
 		if (session != null) {
 			session.close();
 		}
 	}
 	
-	public static void commitTransaction(Session session) {
+	public static void commitTransaction() {
+		Session session = threadLocal.get();
 		if (session != null) {
 			session.getTransaction().commit();
 		}
 	}
 	
-	public static void beginTransaction(Session session) {
+	public static void beginTransaction() {
+		Session session = threadLocal.get();
 		if (session != null) {
 			session.beginTransaction();
 		}
 	}
 	
-	public static void rollBackTransaction(Session session) {
+	public static void rollBackTransaction() {
+		Session session = threadLocal.get();
 		if (session != null) {
 			session.getTransaction().rollback();
 		}

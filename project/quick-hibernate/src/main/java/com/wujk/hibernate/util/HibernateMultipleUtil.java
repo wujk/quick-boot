@@ -29,6 +29,8 @@ public class HibernateMultipleUtil {
 	
 	private static final ConcurrentHashMap<String, SessionFactory> dataSoures = new ConcurrentHashMap<String, SessionFactory>();
 	
+	private static ThreadLocal<Session> threadLocal = new ThreadLocal<Session>();
+	
 	static {
 		String path = FileUtil.getPath("cfg/dataSources.properties");
 		Properties pro = PropertiesUtil.getSystemProperties("cfg/dataSources.properties");
@@ -103,55 +105,65 @@ public class HibernateMultipleUtil {
 	}
 	
 	public static Session getSession(String dbName) {
-		SessionFactory sessionFactory = dataSoures.get(dbName);
-		if (sessionFactory == null) {
-			rebuildSessionFactory(dbName);
+		Session session = threadLocal.get();
+		if (session == null) {
+			SessionFactory sessionFactory = dataSoures.get(dbName);
+			if (sessionFactory == null) {
+				rebuildSessionFactory(dbName);
+			}
+			sessionFactory = dataSoures.get(dbName);
+			if (sessionFactory == null) {
+				throw new RuntimeException("sessionFactory is null or destory");
+			}
+			session = sessionFactory.openSession();
+			threadLocal.set(session);
 		}
-		sessionFactory = dataSoures.get(dbName);
-		if (sessionFactory == null) {
-			throw new RuntimeException("sessionFactory is null or destory");
-		}
-		return sessionFactory.openSession();
+		return session;
 	}
 	
 	public static Session getCurrentSession(String dbName) {
-		SessionFactory sessionFactory = dataSoures.get(dbName);
-		if (sessionFactory == null) {
-			rebuildSessionFactory(dbName);
+		Session session = threadLocal.get();
+		if (session == null) {
+			SessionFactory sessionFactory = dataSoures.get(dbName);
+			if (sessionFactory == null) {
+				rebuildSessionFactory(dbName);
+			}
+			sessionFactory = dataSoures.get(dbName);
+			if (sessionFactory == null) {
+				throw new RuntimeException("sessionFactory is null or destory");
+			}
+			session = sessionFactory.getCurrentSession();
+			threadLocal.set(session);
 		}
-		sessionFactory = dataSoures.get(dbName);
-		if (sessionFactory == null) {
-			throw new RuntimeException("sessionFactory is null or destory");
-		}
-		return sessionFactory.getCurrentSession();
+		return session;
 	}
 	
-	public static void closeSession(Session session) {
+	public static void closeSession() {
+		Session session = threadLocal.get();
 		if (session != null) {
 			session.close();
 		}
 	}
 	
-	public static void commitTransaction(Session session) {
+	public static void commitTransaction() {
+		Session session = threadLocal.get();
 		if (session != null) {
 			session.getTransaction().commit();
 		}
 	}
 	
-	public static void beginTransaction(Session session) {
+	public static void beginTransaction() {
+		Session session = threadLocal.get();
 		if (session != null) {
 			session.beginTransaction();
 		}
 	}
 	
-	public static void rollBackTransaction(Session session) {
+	public static void rollBackTransaction() {
+		Session session = threadLocal.get();
 		if (session != null) {
 			session.getTransaction().rollback();
 		}
-	}
-	
-	public static void main(String[] args) {
-		
 	}
 	
 }
