@@ -7,6 +7,7 @@ import java.io.ObjectOutputStream;
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -48,6 +49,21 @@ public class ObjectUtil {
 
 	@SuppressWarnings("unchecked")
 	public static <T> T getValue(Object obj, T defaultValue) {
+		if (defaultValue == null && obj == null) {
+			return null;
+		}
+		if (defaultValue == null) {
+            if (obj instanceof BigDecimal){
+                obj = obj.toString();
+            }
+			if (obj instanceof Double){
+				obj = obj.toString();
+			}
+			if (obj instanceof Integer){
+				obj = obj.toString();
+			}
+			return (T) obj;
+		}
 		try {
 			if (defaultValue.getClass().isArray() || List.class.isAssignableFrom(defaultValue.getClass())
 					|| Map.class.isAssignableFrom(defaultValue.getClass())) {
@@ -55,6 +71,12 @@ public class ObjectUtil {
 			} else if (String.class.isAssignableFrom(defaultValue.getClass())) {
 				return obj == null ? defaultValue : (T) String.valueOf(obj);
 			} else {
+			    if (obj instanceof BigDecimal){
+			        obj = obj.toString();
+                }
+				if (obj instanceof Double){
+					obj = obj.toString();
+				}
 				String value = String.valueOf(obj);
 				if (Integer.class.isAssignableFrom(defaultValue.getClass())
 						|| int.class.isAssignableFrom(defaultValue.getClass())) {
