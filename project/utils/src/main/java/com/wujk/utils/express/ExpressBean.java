@@ -91,9 +91,9 @@ public class ExpressBean {
 				JEP jep = new JEP();
 				jep.parse(strs[0]);
 				if (Boolean.parseBoolean(jep.getValueAsObject() + "")) {
-					jep.parse(strs[1]);
+					jep.parseExpression(strs[1]);
 				} else {
-					jep.parse(strs[2]);
+					jep.parseExpression(strs[2]);
 				}
 				result = jep.getValueAsObject();
 				System.out.println(operate + "("+ express +")=" + result);
@@ -129,7 +129,7 @@ public class ExpressBean {
 					sb.deleteCharAt(sb.length()-1);
 				}
 				JEP jep = new JEP();
-				jep.parse(sb.toString());
+				jep.parseExpression(sb.toString());
 				result = jep.getValueAsObject();
 				System.out.println(operate + "("+ express +")=" + result);
 				return result;
@@ -164,7 +164,7 @@ public class ExpressBean {
 					sb.deleteCharAt(sb.length()-1);
 				}
 				JEP jep = new JEP();
-				jep.parse("(" + sb.toString() + ")" + "/" + strs.length);
+				jep.parseExpression("(" + sb.toString() + ")" + "/" + strs.length);
 				result = jep.getValueAsObject();
 				System.out.println(operate + "("+ express +")=" + result);
 				return result;
@@ -189,7 +189,7 @@ public class ExpressBean {
 	private Object defaultExpress() throws RuntimeException {
 		try {
 			JEP jep = new JEP();
-			jep.parse(express);
+			jep.parseExpression(express);
 			result = jep.getValueAsObject();
 			System.out.println(operate + "("+ express +")=" + result);
 			return result;
