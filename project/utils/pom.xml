@@ -19,6 +19,7 @@
 		<slf4j.version>1.7.25</slf4j.version>
 		<jaxb.version>2.3.0</jaxb.version>
 		<commons-lang3>3.7</commons-lang3>
+		<jep.version>2.4.2</jep.version>
 	</properties>
 	<dependencyManagement>
 		<dependencies>
@@ -80,6 +81,12 @@
 				<artifactId>jaxb-api</artifactId>
 				<version>${jaxb.version}</version>
 			</dependency>
+			<!-- https://mvnrepository.com/artifact/org.scijava/jep -->
+			<dependency>
+			    <groupId>org.scijava</groupId>
+			    <artifactId>jep</artifactId>
+			    <version>${jep.version}</version>
+			</dependency>
 		</dependencies>
 	</dependencyManagement>
 	<dependencies>
@@ -126,6 +133,10 @@
 		<dependency>
 			<groupId>javax.xml.bind</groupId>
 			<artifactId>jaxb-api</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.scijava</groupId>
+			<artifactId>jep</artifactId>
 		</dependency>
 	</dependencies>
 </project>
