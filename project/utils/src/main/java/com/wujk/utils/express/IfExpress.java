@@ -6,7 +6,7 @@ public class IfExpress implements Express {
 
 	@Override
 	public Object result(ExpressBean bean) {
-		String express = bean.getExpress();
+		String express = bean.getAfterReplaceExpress();
 		String operate = bean.getOperate();
 		String[] strs = express.split(",");
 		if (strs.length == 3) {

@@ -9,7 +9,11 @@ public class ExpressBean {
 	
 	private String express;
 	
+	private String afterReplaceExpress;
+	
 	private String operate = DEFAULT_OPERATE;
+	
+	Map<String, Object> valuesMap;
 	
 	private Map<String, ExpressBean> nextBeans = new HashMap<String, ExpressBean>();
 	
@@ -23,6 +27,14 @@ public class ExpressBean {
 
 	public void setExpress(String express) {
 		this.express = express;
+	}
+
+	public String getAfterReplaceExpress() {
+		return afterReplaceExpress;
+	}
+
+	public void setAfterReplaceExpress(String afterReplaceExpress) {
+		this.afterReplaceExpress = afterReplaceExpress;
 	}
 
 	public String getOperate() {
@@ -39,6 +51,14 @@ public class ExpressBean {
 
 	public void setNextBeans(Map<String, ExpressBean> nextBeans) {
 		this.nextBeans = nextBeans;
+	}
+
+	public Map<String, Object> getValuesMap() {
+		return valuesMap;
+	}
+
+	public void setValuesMap(Map<String, Object> valuesMap) {
+		this.valuesMap = valuesMap;
 	}
 
 	public Class<?> getExpressClass() {
@@ -67,8 +87,9 @@ public class ExpressBean {
 	}
 
 	public Object getResult() {
-		if (express.startsWith("(") && express.endsWith(")") && !operate.equals(DEFAULT_OPERATE)) {
-			express = express.substring(1, express.length() - 1);
+		replaceValue();
+		if (afterReplaceExpress.startsWith("(") && afterReplaceExpress.endsWith(")") && !operate.equals(DEFAULT_OPERATE)) {
+			afterReplaceExpress = afterReplaceExpress.substring(1, afterReplaceExpress.length() - 1);
 		}
 		if (nextBeans.size() > 0) {
 			Set<String> keys = nextBeans.keySet();
@@ -76,10 +97,10 @@ public class ExpressBean {
 				ExpressBean bean = nextBeans.get(key);
 				String res = bean.getResult() + "";
 				System.out.println("替换：" + key + "====" + res);
-				express = express.replace(key, res);
+				afterReplaceExpress = afterReplaceExpress.replace(key, res);
 			}
 		}
-		System.out.println("express: " + express);
+		System.out.println("express: " + afterReplaceExpress);
 		try {
 			Express e = (Express) getExpressClass().newInstance();
 			return e.result(this);
@@ -89,10 +110,20 @@ public class ExpressBean {
 		return result;
 	}
 	
-	@Override
-	public String toString() {
-		return "Bean [express=" + express + ", operate=" + operate + ", nextBeans=" + nextBeans + "]";
+	void replaceValue() {
+		afterReplaceExpress = express;
+		if (valuesMap != null) {
+			Set<String> keys = valuesMap.keySet();
+	    	for (String key : keys) {
+	    		afterReplaceExpress = afterReplaceExpress.replaceAll(key, String.valueOf(valuesMap.get(key)));
+	    	}
+		}
 	}
 
+	@Override
+	public String toString() {
+		return "ExpressBean [express=" + express + ", operate=" + operate + ", nextBeans=" + nextBeans
+				+ ", expressClass=" + expressClass + "]";
+	}
 	
 }

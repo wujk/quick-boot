@@ -2,7 +2,8 @@ package com.wujk.utils.express;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
+
+import com.wujk.utils.pojo.ObjectUtil;
 
 public class ExpressParse {
 	
@@ -11,16 +12,32 @@ public class ExpressParse {
 
 	public ExpressParse(String express, Map<String, Object> valuesMap) {
 		express = express.trim().replaceAll(" ", "");
-		if (valuesMap != null) {
-			Set<String> keys = valuesMap.keySet();
-	    	for (String key : keys) {
-	    		express = express.replaceAll(key, String.valueOf(valuesMap.get(key)));
-	    	}
-		}
 		bean = new ExpressBean();
 		bean.setExpress(express);
 		parse(bean, 0);
 		System.out.println(bean);
+		if (!ObjectUtil.isEmpty(valuesMap)) {
+			setBeanValueMap(bean, valuesMap);
+		}
+	}
+	
+	public ExpressParse(String express) {
+		this(express, null);
+	}
+	
+	public void setValue(Map<String, Object> valuesMap) {
+		setBeanValueMap(bean, valuesMap);
+	}
+	
+	private void setBeanValueMap(ExpressBean bean, Map<String, Object> valuesMap) {
+		bean.setValuesMap(valuesMap);
+		Map<String, ExpressBean> nextBeans = bean.getNextBeans();
+		if (!ObjectUtil.isEmpty(nextBeans)) {
+			Collection<ExpressBean> list = nextBeans.values();
+			for (ExpressBean eBean : list) {
+				setBeanValueMap(eBean, valuesMap);
+			}
+		}
 	}
 	
 	public void parse(ExpressBean bean, int count) {
@@ -120,11 +137,12 @@ public class ExpressParse {
 		Map<String, Object> valuesMap = new HashMap<>();
 		valuesMap.put("a", 2);
 		valuesMap.put("b", 4);
-		ExpressBean bean = new ExpressParse("IF(a+b>1,SUM(AVG(a,b),SUM(1,1)),b)", valuesMap).getBean();
-		System.out.println(bean.getResult());
-		
-	    
-		
+		ExpressParse p = new ExpressParse("IF(a+b>1,SUM(AVG(a,b),SUM(1,1)),b) + b / a");
+		p.setValue(valuesMap);
+		System.out.println(p.evaluate());
+		valuesMap.put("b", 5);
+		p.setValue(valuesMap);
+		System.out.println(p.evaluate());
 	}
 	
 }

@@ -6,7 +6,7 @@ public class DefaultExpress implements Express {
 
 	@Override
 	public Object result(ExpressBean bean) {
-		String express = bean.getExpress();
+		String express = bean.getAfterReplaceExpress();
 		String operate = bean.getOperate();
 		try {
 			JEP jep = new JEP();
