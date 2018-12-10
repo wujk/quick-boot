@@ -9,26 +9,45 @@ public class ExpressParse {
 	
 	private String[] regrexs = {"IF", "SUM", "AVG"};
 	private ExpressBean bean;
+	private Map<String, Object> valuesMap;
 
 	public ExpressParse(String express, Map<String, Object> valuesMap) {
+		this.valuesMap = valuesMap;
 		express = express.trim().replaceAll(" ", "");
 		bean = new ExpressBean();
 		bean.setExpress(express);
-		parse(bean, 0);
-		System.out.println(bean);
-		if (!ObjectUtil.isEmpty(valuesMap)) {
-			setBeanValueMap(bean, valuesMap);
-		}
+		
 	}
 	
 	public ExpressParse(String express) {
 		this(express, null);
 	}
 	
+	public String[] getRegrexs() {
+		return regrexs;
+	}
+
+	/**
+	 * 设置表达式关键字
+	 * @param regrexs
+	 */
+	public void setRegrexs(String[] regrexs) {
+		this.regrexs = regrexs;
+	}
+
+	/**
+	 *  赋值
+	 * @param valuesMap
+	 */
 	public void setValue(Map<String, Object> valuesMap) {
 		setBeanValueMap(bean, valuesMap);
 	}
 	
+	/**
+	 * 给每一个子表达式赋值
+	 * @param bean
+	 * @param valuesMap
+	 */
 	private void setBeanValueMap(ExpressBean bean, Map<String, Object> valuesMap) {
 		bean.setValuesMap(valuesMap);
 		Map<String, ExpressBean> nextBeans = bean.getNextBeans();
@@ -40,15 +59,30 @@ public class ExpressParse {
 		}
 	}
 	
-	public void parse(ExpressBean bean, int count) {
+	/**
+	 * 解析表达式
+	 */
+	public void parse() {
+		parse(bean, 0, this.valuesMap);
+		System.out.println(bean);
+	}
+	
+	/**
+	 * 解析表达式
+	 * @param bean
+	 * @param count
+	 * @param valuesMap
+	 */
+	private void parse(ExpressBean bean, int count, Map<String, Object> valuesMap) {
 		count ++;
 		String express = bean.getExpress();
+		bean.setValuesMap(valuesMap);
 		//System.out.println(express);
 		// 定位特殊计算表达式 如 IF SUM AVG
 		// 1、获取第一个特殊符号
 		int index = Integer.MAX_VALUE;
 		String operate = null;
-		for (String regrex : regrexs) {
+		for (String regrex : getRegrexs()) {
 			int i = express.indexOf(regrex);
 			if (i == -1) {
 				continue;
@@ -82,7 +116,7 @@ public class ExpressParse {
 					childExpress = childExpress.substring(operate.length());
 					newBean.setExpress(childExpress);
 					bean.getNextBeans().put(key, newBean);
-					parse(bean, count);
+					parse(bean, count, valuesMap);
 					break;
 				}
 			}
@@ -90,7 +124,7 @@ public class ExpressParse {
         if (bean.getNextBeans().size() > 0) {
         	Collection<ExpressBean> beans = bean.getNextBeans().values();
         	for (ExpressBean _bean : beans) {
-        		parse(_bean, 0);
+        		parse(_bean, 0, valuesMap);
         	}
         }
 	}
@@ -138,6 +172,7 @@ public class ExpressParse {
 		valuesMap.put("a", 2);
 		valuesMap.put("b", 4);
 		ExpressParse p = new ExpressParse("IF(a+b>1,SUM(AVG(a,b),SUM(1,1)),b) + b / a");
+		p.parse();
 		p.setValue(valuesMap);
 		System.out.println(p.evaluate());
 		valuesMap.put("b", 5);
