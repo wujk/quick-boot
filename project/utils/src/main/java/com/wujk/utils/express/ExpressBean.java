@@ -1,10 +1,7 @@
 package com.wujk.utils.express;
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
-
-import org.nfunk.jep.JEP;
 
 public class ExpressBean {
 	
@@ -17,6 +14,8 @@ public class ExpressBean {
 	private Map<String, ExpressBean> nextBeans = new HashMap<String, ExpressBean>();
 	
 	private Object result;
+	
+	private Class<?> expressClass;
 
 	public String getExpress() {
 		return express;
@@ -42,6 +41,31 @@ public class ExpressBean {
 		this.nextBeans = nextBeans;
 	}
 
+	public Class<?> getExpressClass() {
+		if (expressClass != null) {
+			return expressClass;
+		}
+		switch (operate) {
+		case "IF":
+			expressClass = IfExpress.class;
+			break;
+		case "SUM":
+			expressClass = SumExpress.class;
+			break;
+		case "AVG":
+			expressClass = AvgExpress.class;
+			break;
+		default:
+			expressClass = DefaultExpress.class;
+			break;
+		}
+		return expressClass;
+	}
+
+	public void setExpressClass(Class<?> expressClass) {
+		this.expressClass = expressClass;
+	}
+
 	public Object getResult() {
 		if (express.startsWith("(") && express.endsWith(")") && !operate.equals(DEFAULT_OPERATE)) {
 			express = express.substring(1, express.length() - 1);
@@ -56,152 +80,15 @@ public class ExpressBean {
 			}
 		}
 		System.out.println("express: " + express);
-		switch (operate) {
-		case "IF":
-			result = ifExpress();
-			break;
-		case "SUM":
-			result = sum();
-			break;
-		case "AVG":
-			result = avg();
-			break;
-		default:
-			result = defaultExpress();
-			break;
+		try {
+			Express e = (Express) getExpressClass().newInstance();
+			return e.result(this);
+		} catch (InstantiationException | IllegalAccessException e) {
+			e.printStackTrace();
 		}
 		return result;
 	}
-
-	/**
-	 * 
-	* @Title: ifExpress
-	* @Description: if计算
-	* @author kevin
-	* @date 2018年11月29日 下午4:43:53
-	* @return
-	* @throws RuntimeException Object
-	* @throws
-	 */
-	protected Object ifExpress() throws RuntimeException {
-		String[] strs = express.split(",");
-		if (strs.length == 3) {
-			try {
-				
-				JEP jep = new JEP();
-				jep.parse(strs[0]);
-				if (Boolean.parseBoolean(jep.getValueAsObject() + "")) {
-					jep.parseExpression(strs[1]);
-				} else {
-					jep.parseExpression(strs[2]);
-				}
-				result = jep.getValueAsObject();
-				System.out.println(operate + "("+ express +")=" + result);
-				return result;
-			} catch (Exception e) {
-				throw new RuntimeException(operate + "("+ express +")表达式不正确");
-			}
-		} else {
-			throw new RuntimeException(operate + "("+ express +")表达式不正确");
-		}
-	}
-
-	/**
-	 * 
-	* @Title: sum
-	* @Description: 求和
-	* @author kevin
-	* @date 2018年11月29日 下午4:42:33
-	* @return
-	* @throws RuntimeException Object
-	* @throws
-	 */
-	protected Object sum() throws RuntimeException {
-		String[] strs;
-		strs = express.split(",");
-		if (strs.length > 0) {
-			try {
-				StringBuffer sb = new StringBuffer();
-				for (int i = 0; i < strs.length; i++) {
-					sb.append(strs[i]).append("+");
-				}
-				if (sb.length() > 0) {
-					sb.deleteCharAt(sb.length()-1);
-				}
-				JEP jep = new JEP();
-				jep.parseExpression(sb.toString());
-				result = jep.getValueAsObject();
-				System.out.println(operate + "("+ express +")=" + result);
-				return result;
-			} catch (Exception e) {
-				throw new RuntimeException(operate + "("+ express +")表达式不正确");
-			}
-		} else {
-			throw new RuntimeException(operate + "("+ express +")表达式不正确");
-		}
-	}
-
-	/**
-	 * 
-	* @Title: avg
-	* @Description: 平均值
-	* @author kevin
-	* @date 2018年11月29日 下午4:42:50
-	* @return
-	* @throws RuntimeException Object
-	* @throws
-	 */
-	protected Object avg() throws RuntimeException {
-		String[] strs;
-		strs = express.split(",");
-		if (strs.length > 0) {
-			try {
-				StringBuffer sb = new StringBuffer();
-				for (int i = 0; i < strs.length; i++) {
-					sb.append(strs[i]).append("+");
-				}
-				if (sb.length() > 0) {
-					sb.deleteCharAt(sb.length()-1);
-				}
-				JEP jep = new JEP();
-				jep.parseExpression("(" + sb.toString() + ")" + "/" + strs.length);
-				result = jep.getValueAsObject();
-				System.out.println(operate + "("+ express +")=" + result);
-				return result;
-			} catch (Exception e) {
-				throw new RuntimeException(operate + "("+ express +")表达式不正确");
-			}
-		} else {
-			throw new RuntimeException(operate + "("+ express +")表达式不正确");
-		}
-	}
-
-	/**
-	 * 
-	* @Title: defaultExpress
-	* @Description: 默认计算
-	* @author kevin
-	* @date 2018年11月29日 下午4:41:03
-	* @return
-	* @throws RuntimeException Object
-	* @throws
-	 */
-	private Object defaultExpress() throws RuntimeException {
-		try {
-			JEP jep = new JEP();
-			jep.parseExpression(express);
-			result = jep.getValueAsObject();
-			System.out.println(operate + "("+ express +")=" + result);
-			return result;
-		} catch (Exception e) {
-			throw new RuntimeException(operate + "("+ express +")表达式不正确");
-		}
-	}
-
-	public void setResult(Object result) {
-		this.result = result;
-	}
-
+	
 	@Override
 	public String toString() {
 		return "Bean [express=" + express + ", operate=" + operate + ", nextBeans=" + nextBeans + "]";

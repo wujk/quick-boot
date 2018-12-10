@@ -1,10 +1,8 @@
 package com.wujk.utils.express;
-
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
-
 
 public class ExpressParse {
 	
@@ -25,7 +23,7 @@ public class ExpressParse {
 		System.out.println(bean);
 	}
 	
-	public void parse(ExpressBean bean, int count)  {
+	public void parse(ExpressBean bean, int count) {
 		count ++;
 		String express = bean.getExpress();
 		//System.out.println(express);
@@ -63,6 +61,7 @@ public class ExpressParse {
 					// System.out.println(key + " : " + childExpress + " : " + express);
 					ExpressBean newBean = new ExpressBean();
 					newBean.setOperate(operate);
+					newBean.setExpressClass(parseExpressClass(operate));
 					childExpress = childExpress.substring(operate.length());
 					newBean.setExpress(childExpress);
 					bean.getNextBeans().put(key, newBean);
@@ -79,6 +78,36 @@ public class ExpressParse {
         }
 	}
 	
+	/**
+	 * 
+	* @Title: parseExpressClass
+	* @Description: 通过重写该方法，可以根据不同操作符转化成需要对应的各种自定义计算方式（自定义计算方式可以实现Express接口）
+	* @author kevin
+	* @date 2018年12月10日 上午10:54:54
+	* @param operate
+	* @return Class<?>
+	* @throws
+	* 如：
+	* switch (operate) {
+		case "IF":
+			expressClass = IfExpress.class;
+			break;
+		case "SUM":
+			expressClass = SumExpress.class;
+			break;
+		case "AVG":
+			expressClass = AvgExpress.class;
+			break;
+		default:
+			expressClass = DefaultExpress.class;
+			break;
+		}
+		return expressClass;
+	 */
+	public Class<?> parseExpressClass(String operate) {
+		return null;
+	}
+	
 	public ExpressBean getBean() {
 		return bean;
 	}
@@ -91,7 +120,7 @@ public class ExpressParse {
 		Map<String, Object> valuesMap = new HashMap<>();
 		valuesMap.put("a", 2);
 		valuesMap.put("b", 4);
-		ExpressBean bean = new ExpressParse("a+IF(a+b>1,SUM(AVG(a,b),SUM(1,1)),b)", valuesMap).getBean();
+		ExpressBean bean = new ExpressParse("IF(a+b>1,SUM(AVG(a,b),SUM(1,1)),b)", valuesMap).getBean();
 		System.out.println(bean.getResult());
 		
 	    
