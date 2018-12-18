@@ -14,6 +14,7 @@
 		<module>quick-zookeeper</module>
 		<module>quick-wechat</module>
 		<module>quick-hibernate</module>
+		<module>quick-mybatis</module>
 	</modules>
 	<properties>
 		<java.version>1.8</java.version>
