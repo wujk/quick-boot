@@ -19,7 +19,9 @@
 		<slf4j.version>1.7.25</slf4j.version>
 		<jaxb.version>2.3.0</jaxb.version>
 		<commons-lang3>3.7</commons-lang3>
+		<commons-lang>2.6</commons-lang>
 		<jep.version>2.4.2</jep.version>
+		<jsoup.version>1.11.3</jsoup.version>
 	</properties>
 	<dependencyManagement>
 		<dependencies>
@@ -83,9 +85,21 @@
 			</dependency>
 			<!-- https://mvnrepository.com/artifact/org.scijava/jep -->
 			<dependency>
-			    <groupId>org.scijava</groupId>
-			    <artifactId>jep</artifactId>
-			    <version>${jep.version}</version>
+				<groupId>org.scijava</groupId>
+				<artifactId>jep</artifactId>
+				<version>${jep.version}</version>
+			</dependency>
+			<!-- https://mvnrepository.com/artifact/org.jsoup/jsoup -->
+			<dependency>
+				<groupId>org.jsoup</groupId>
+				<artifactId>jsoup</artifactId>
+				<version>${jsoup.version}</version>
+			</dependency>
+			<!-- https://mvnrepository.com/artifact/commons-lang/commons-lang -->
+			<dependency>
+				<groupId>commons-lang</groupId>
+				<artifactId>commons-lang</artifactId>
+				<version>${commons-lang}</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
@@ -137,6 +151,14 @@
 		<dependency>
 			<groupId>org.scijava</groupId>
 			<artifactId>jep</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.jsoup</groupId>
+			<artifactId>jsoup</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>commons-lang</groupId>
+			<artifactId>commons-lang</artifactId>
 		</dependency>
 	</dependencies>
 </project>
