@@ -14,7 +14,7 @@ public class XSSUtil {
 	 * @param value
 	 * @return
 	 */
-	public boolean isValid(String value) {
+	public static boolean isValid(String value) {
 		String unescapeValue = StringEscapeUtils.unescapeJava(value);
 		return Jsoup.isValid(unescapeValue, DEFAULT_WHITELIST);
 	}
