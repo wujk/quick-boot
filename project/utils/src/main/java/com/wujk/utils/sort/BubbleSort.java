@@ -52,10 +52,6 @@ public class BubbleSort<T> {
 		}
 	}
 
-	public interface Compare<T> {
-		public int compare(T t1, T t2);
-	}
-	
 	public static void main(String[] args) {
 		Integer[] integer = new Integer[] {3,1,2,4,6,88,9,99,0};
 		System.out.println(Arrays.toString(integer));
