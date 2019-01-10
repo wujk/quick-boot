@@ -5,33 +5,23 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
-public class SelectionSort<T> {
-private Compare<T> c;
+public class SelectionSort<T> extends Sort<T> {
 	
 	public SelectionSort(T[] arrays, Compare<T> c) {
-		this.c = c;
-		if (arrays != null && arrays.length > 1) {
-			sortArrays(arrays);
-		}
+		super(arrays, c);
 	}
 	
 	public SelectionSort(Collection<T> collection, Compare<T> c) {
-		this.c = c;
-		if (collection != null && collection.size() > 1) {
-			@SuppressWarnings("unchecked")
-			T[] arrays = (T[]) collection.toArray();
-			sortArrays(arrays);
-			collection.clear();
-			collection.addAll(Arrays.asList(arrays));
-		}
+		super(collection, c);
 	}
 	
-	private void sortArrays(T[] arrays) {
+	@Override
+	protected void sortArrays(T[] arrays) {
 		int startIndex = 0;
 		while (startIndex + 1 < arrays.length) {
 			int minIndex = startIndex;
 			for (int i = startIndex + 1; i < arrays.length; i++) {
-				if (c.compare(arrays[minIndex], arrays[i]) > 0) {
+				if (getC().compare(arrays[minIndex], arrays[i]) > 0) {
 					minIndex = i;
 				}
 			}
@@ -40,13 +30,12 @@ private Compare<T> c;
 			arrays[startIndex] = temp;
 			startIndex ++;
 		}
-		
 	}
 
 	public static void main(String[] args) {
 		Integer[] integer = new Integer[] {3,1,2,4,6,88,91,99,0};
 		System.out.println(Arrays.toString(integer));
-		new BubbleSort<>(integer, new Compare<Integer>() {
+		new SelectionSort<>(integer, new Compare<Integer>() {
 			
 			@Override
 			public int compare(Integer t1, Integer t2) {
@@ -66,7 +55,7 @@ private Compare<T> c;
 		list.add(99);
 		list.add(0);
 		System.out.println(list);
-		new BubbleSort<Integer>(list, new Compare<Integer>() {
+		new SelectionSort<Integer>(list, new Compare<Integer>() {
 			
 			@Override
 			public int compare(Integer t1, Integer t2) {
