@@ -16,6 +16,7 @@
 		<module>quick-hibernate</module>
 		<module>quick-mybatis</module>
 		<module>quick-view</module>
+		<module>quick-redis</module>
 	</modules>
 	<properties>
 		<java.version>1.8</java.version>
