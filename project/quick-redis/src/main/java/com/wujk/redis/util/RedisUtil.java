@@ -23,13 +23,14 @@ public class RedisUtil {
 	private RedisStandaloneConfiguration redisStandaloneConfiguration;
 	private JedisPoolConfig jedisPoolConfig;
 	
-	private int maxIdle;
-	private long maxWaitMillis;
-	private boolean testOnBorrow;
-	private String hostName;
-	private int port;
-	private int index;
-	private int maxTotal;
+	private int maxIdle = 10;
+	private long maxWaitMillis = 10000000;
+	private boolean testOnBorrow = true;
+	private String hostName = "192.168.140.215";
+	private int port = 6379;
+	private int index = 3;
+	private int maxTotal = 5;
+	private String password = "pass";
 
 	public RedisTemplate<String, Object> redisTemplate() {
 		Jackson2JsonRedisSerializer<Object> jackson2JsonRedisSerializer=new Jackson2JsonRedisSerializer<Object>(Object.class);
@@ -44,6 +45,7 @@ public class RedisUtil {
         redisTemplate.setValueSerializer(jackson2JsonRedisSerializer);
         redisTemplate.setHashKeySerializer(rs);
         redisTemplate.setHashValueSerializer(jackson2JsonRedisSerializer);
+        redisTemplate.afterPropertiesSet();
 		return redisTemplate;
 	}
 	
@@ -58,6 +60,7 @@ public class RedisUtil {
 	public RedisStandaloneConfiguration redisStandaloneConfiguration() {
 		redisStandaloneConfiguration = new RedisStandaloneConfiguration(hostName, port);
 		redisStandaloneConfiguration.setDatabase(index);
+		redisStandaloneConfiguration.setPassword(password );
 		return redisStandaloneConfiguration;
 	}
 	
@@ -74,7 +77,10 @@ public class RedisUtil {
 		return jedisPoolConfig;
 	}
 
-	public RedisTemplate<String, Object> getRedisTemplate() {
+	public synchronized RedisTemplate<String, Object> getRedisTemplate() {
+		if (redisTemplate == null) {
+			redisTemplate = redisTemplate();
+		}
 		return redisTemplate;
 	}
 
@@ -82,7 +88,10 @@ public class RedisUtil {
 		this.redisTemplate = redisTemplate;
 	}
 
-	public Jedis getJedis() {
+	public synchronized Jedis getJedis() {
+		if (jedis == null) {
+			jedis = jedis();
+		}
 		return jedis;
 	}
 
@@ -90,7 +99,10 @@ public class RedisUtil {
 		this.jedis = jedis;
 	}
 
-	public JedisConnectionFactory getJedisConnectionFactory() {
+	public synchronized JedisConnectionFactory getJedisConnectionFactory() {
+		if (jedisConnectionFactory == null) {
+			jedisConnectionFactory = jedisConnectionFactory();
+		}
 		return jedisConnectionFactory;
 	}
 
@@ -98,7 +110,10 @@ public class RedisUtil {
 		this.jedisConnectionFactory = jedisConnectionFactory;
 	}
 
-	public JedisClientConfiguration getJedisClientConfiguration() {
+	public synchronized JedisClientConfiguration getJedisClientConfiguration() {
+		if (jedisClientConfiguration == null) {
+			jedisClientConfiguration = jedisClientConfiguration();
+		}
 		return jedisClientConfiguration;
 	}
 
@@ -106,7 +121,10 @@ public class RedisUtil {
 		this.jedisClientConfiguration = jedisClientConfiguration;
 	}
 
-	public RedisStandaloneConfiguration getRedisStandaloneConfiguration() {
+	public synchronized RedisStandaloneConfiguration getRedisStandaloneConfiguration() {
+		if (redisStandaloneConfiguration == null) {
+			redisStandaloneConfiguration = redisStandaloneConfiguration();
+		}
 		return redisStandaloneConfiguration;
 	}
 
@@ -114,7 +132,10 @@ public class RedisUtil {
 		this.redisStandaloneConfiguration = redisStandaloneConfiguration;
 	}
 
-	public JedisPoolConfig getJedisPoolConfig() {
+	public synchronized JedisPoolConfig getJedisPoolConfig() {
+		if (jedisPoolConfig == null) {
+			jedisPoolConfig = jedisPoolConfig();
+		}
 		return jedisPoolConfig;
 	}
 
