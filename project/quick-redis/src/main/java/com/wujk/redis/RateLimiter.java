@@ -5,6 +5,7 @@ import java.math.BigDecimal;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.wujk.utils.date.StopWatch;
 import com.wujk.utils.pojo.ObjectUtil;
 import com.wujk.utils.thread.ThreadUtil;
 
@@ -21,7 +22,7 @@ public class RateLimiter extends RedisCount<Double> {
 	private BigDecimal total;
 	private long timeout = 5;   // 5秒超时时间
 	
-	private long refreshTime = System.currentTimeMillis();
+	private StopWatch stopWatch;
 	
 	public RateLimiter() {
 		this(5D);
@@ -55,9 +56,7 @@ public class RateLimiter extends RedisCount<Double> {
 	}
 	
 	private void refreshTokens() {
-		long nowTime = System.currentTimeMillis();
-		long diff = nowTime - refreshTime;
-		refreshTime = nowTime;
+		long diff = stopWatch.getMs();
 		BigDecimal increateCount = rate.multiply(new BigDecimal(diff).divide(new BigDecimal(1000)));
 		total = new BigDecimal(ObjectUtil.getValue(getRedisUtil().getRedisTemplate().opsForValue().get(getKey()), getFloor()));
 		total = total.add(increateCount);
@@ -67,22 +66,19 @@ public class RateLimiter extends RedisCount<Double> {
 	}
 	
 	public synchronized boolean tryAcquire() {
+		stopWatch = new StopWatch();
 		refreshTokens();
 		boolean acquire = count(take.doubleValue());
 		getRedisUtil().getRedisTemplate().opsForValue().set(getKey(), total.doubleValue());
 		return acquire;
 	}
 	
-	private boolean checkTimeOut(long startTime) {
-		return System.currentTimeMillis() - startTime > timeout * 1000;
-	}
-	
 	public synchronized boolean acquire() {
+		stopWatch = new StopWatch(timeout * 1000);
 		refreshTokens();
-		long startTime = System.currentTimeMillis();
 		boolean acquire = false;
 		while (!(acquire = count(take.doubleValue()))) {
-			if (checkTimeOut(startTime)) {
+			if (stopWatch.checkTimeout()) {
 				logger.info("timeOut.......");
 				break;
 			}
@@ -106,7 +102,7 @@ public class RateLimiter extends RedisCount<Double> {
 	}
 	
 	public static void main(String[] args) {
-		RateLimiter limiter = new RateLimiter(1.0);
+		RateLimiter limiter = new RateLimiter(0.5);
 		for (int a= 0; a < 10000; a++) {
 			new Thread(new Runnable() {
 				
