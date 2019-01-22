@@ -8,18 +8,23 @@ public class StopWatch {
 	
 	private long startTime;
 	private long timeoutMills;
+	private long endTime;
 
 	public StopWatch() {
-		this(5000);
+		this(System.currentTimeMillis());
 	}
 	
-	public StopWatch(long timeoutMills) {
-		startTime = System.currentTimeMillis();
+	public StopWatch(long startTime) {
+		this(startTime, 5000);
+	}
+	
+	public StopWatch(long startTime, long timeoutMills) {
+		this.startTime = startTime;
 		this.timeoutMills = timeoutMills;
 	}
 
 	public long getMs() {
-		return System.currentTimeMillis() - startTime;
+		return (endTime = System.currentTimeMillis()) - startTime;
 	}
 
 	public void reset() {
@@ -28,6 +33,10 @@ public class StopWatch {
 	
 	public long getStartTime() {
 		return startTime;
+	}
+
+	public long getEndTime() {
+		return endTime;
 	}
 
 	public boolean checkTimeout(long timeoutMills) {

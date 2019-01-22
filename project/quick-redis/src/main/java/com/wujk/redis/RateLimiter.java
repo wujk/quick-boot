@@ -18,9 +18,10 @@ public class RateLimiter extends RedisCount<Double> {
 	private static final Logger logger = LoggerFactory.getLogger(RedisCount.class);
 	
 	private BigDecimal rate = new BigDecimal(5.0); // 每秒产生的速率
-	private BigDecimal take = new BigDecimal(-5.0);
+	private BigDecimal take = new BigDecimal(2.5);
 	private BigDecimal total;
 	private long timeout = 5;   // 5秒超时时间
+	private volatile long refreshTime = System.currentTimeMillis();
 	
 	private StopWatch stopWatch;
 	
@@ -57,6 +58,8 @@ public class RateLimiter extends RedisCount<Double> {
 	
 	private void refreshTokens() {
 		long diff = stopWatch.getMs();
+		refreshTime = stopWatch.getEndTime();
+		logger.info(Thread.currentThread().getName() + "：" + (diff / 1000) + "s后：");
 		BigDecimal increateCount = rate.multiply(new BigDecimal(diff).divide(new BigDecimal(1000)));
 		total = new BigDecimal(ObjectUtil.getValue(getRedisUtil().getRedisTemplate().opsForValue().get(getKey()), getFloor()));
 		total = total.add(increateCount);
@@ -66,7 +69,7 @@ public class RateLimiter extends RedisCount<Double> {
 	}
 	
 	public synchronized boolean tryAcquire() {
-		stopWatch = new StopWatch();
+		stopWatch = new StopWatch(refreshTime);
 		refreshTokens();
 		boolean acquire = count(take.doubleValue());
 		getRedisUtil().getRedisTemplate().opsForValue().set(getKey(), total.doubleValue());
@@ -74,7 +77,7 @@ public class RateLimiter extends RedisCount<Double> {
 	}
 	
 	public synchronized boolean acquire() {
-		stopWatch = new StopWatch(timeout * 1000);
+		stopWatch = new StopWatch(refreshTime, timeout * 1000);
 		refreshTokens();
 		boolean acquire = false;
 		while (!(acquire = count(take.doubleValue()))) {
@@ -102,12 +105,14 @@ public class RateLimiter extends RedisCount<Double> {
 	}
 	
 	public static void main(String[] args) {
-		RateLimiter limiter = new RateLimiter(0.5);
+		RateLimiter limiter = new RateLimiter(5D);
 		for (int a= 0; a < 10000; a++) {
+			
 			new Thread(new Runnable() {
 				
 				@Override
 				public void run() {
+					
 					System.out.println(limiter.acquire());
 				}
 			}).start();
