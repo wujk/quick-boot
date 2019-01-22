@@ -8,6 +8,11 @@ import org.slf4j.LoggerFactory;
 import com.wujk.utils.pojo.ObjectUtil;
 import com.wujk.utils.thread.ThreadUtil;
 
+/**
+ * 令牌桶
+ * @author CI11951
+ *
+ */
 public class RateLimiter extends RedisCount<Double> {
 	private static final Logger logger = LoggerFactory.getLogger(RedisCount.class);
 	
