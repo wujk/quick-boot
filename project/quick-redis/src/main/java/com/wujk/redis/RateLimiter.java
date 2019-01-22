@@ -6,6 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.wujk.utils.pojo.ObjectUtil;
+import com.wujk.utils.thread.ThreadUtil;
 
 public class RateLimiter extends RedisCount<Double> {
 	private static final Logger logger = LoggerFactory.getLogger(RedisCount.class);
@@ -67,20 +68,20 @@ public class RateLimiter extends RedisCount<Double> {
 		return acquire;
 	}
 	
+	private boolean checkTimeOut(long startTime) {
+		return System.currentTimeMillis() - startTime > timeout * 1000;
+	}
+	
 	public synchronized boolean acquire() {
 		refreshTokens();
 		long startTime = System.currentTimeMillis();
 		boolean acquire = false;
 		while (!(acquire = count(take.doubleValue()))) {
-			try {
-				Thread.sleep(1000);
-			} catch (InterruptedException e) {
-				logger.error(e.getMessage(), e);
-			}
-			if (System.currentTimeMillis() - startTime > timeout * 1000) {
+			if (checkTimeOut(startTime)) {
 				logger.info("timeOut.......");
 				break;
 			}
+			ThreadUtil.sleep(1000);
 			refreshTokens();
 		}
 		getRedisUtil().getRedisTemplate().opsForValue().set(getKey(), total.doubleValue());
