@@ -78,12 +78,12 @@ public class RateLimiter extends RedisCount<Double> {
 		refreshTokens();
 		boolean acquire = false;
 		while (!(acquire = count(take.doubleValue()))) {
+			ThreadUtil.sleep(1000);
+			refreshTokens();
 			if (stopWatch.checkTimeout()) {
 				logger.info("timeOut.......");
 				break;
 			}
-			ThreadUtil.sleep(1000);
-			refreshTokens();
 		}
 		getRedisUtil().getRedisTemplate().opsForValue().set(getKey(), total.doubleValue());
 		return acquire;
