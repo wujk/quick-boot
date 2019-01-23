@@ -18,7 +18,7 @@ public class RateLimiter extends RedisCount<Double> {
 	private static final Logger logger = LoggerFactory.getLogger(RedisCount.class);
 	
 	private BigDecimal rate = new BigDecimal(5.0); // 每秒产生的速率
-	private BigDecimal take = new BigDecimal(2.5);
+	private BigDecimal take = new BigDecimal(1);
 	private BigDecimal total;
 	private long timeout = 5;   // 5秒超时时间
 	private volatile long refreshTime = System.currentTimeMillis();
