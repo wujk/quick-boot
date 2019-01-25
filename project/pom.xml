@@ -17,6 +17,7 @@
 		<module>quick-mybatis</module>
 		<module>quick-view</module>
 		<module>quick-redis</module>
+		<module>quick-spring</module>
 	</modules>
 	<properties>
 		<java.version>1.8</java.version>
