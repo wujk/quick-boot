@@ -10,7 +10,8 @@ import java.util.Set;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
-import com.wujk.utils.pojo.ObjectUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * 在理解这两种反射机制之前，需要弄清楚java类的加载机制.
@@ -34,7 +35,7 @@ import com.wujk.utils.pojo.ObjectUtil;
  *
  */
 public final class ClassUtil {
-
+	private static final Logger logger = LoggerFactory.getLogger(ClassUtil.class);
 	/**
 	 * 获取类加载器
 	 */
@@ -58,7 +59,7 @@ public final class ClassUtil {
 	}
 	
 	public static Class<?> classForName(String className, boolean initialize) throws ClassNotFoundException {
-		return classForName(className, initialize);
+		return classForName(className, initialize, null);
 	}
 
 	public static Class<?> classForName(String className, boolean initialize, ClassLoader loader)
@@ -93,8 +94,10 @@ public final class ClassUtil {
 			Enumeration<URL> urls = getClassLoader().getResources(packageName.replace(".", "/"));
 			while (urls.hasMoreElements()) {
 				URL url = urls.nextElement();
+				System.out.println(url.toString());
 				if (url != null) {
 					String protocol = url.getProtocol();
+					System.out.println(protocol);
 					if (protocol.equals("file")) {
 						String packagePath = url.getPath().replaceAll("%20", " ");
 						addClass(classSet, packagePath, packageName);
@@ -111,6 +114,10 @@ public final class ClassUtil {
 										String className = jarEntryName.substring(0, jarEntryName.lastIndexOf("."))
 												.replaceAll("/", ".");
 										doAddClass(classSet, className);
+									} else if (jarEntryName.endsWith(".properties")) {
+										logger.info(jarEntryName);
+									} else if (jarEntryName.endsWith(".xml")) {
+										logger.info(jarEntryName);
 									}
 								}
 							}
@@ -161,4 +168,5 @@ public final class ClassUtil {
 		}
 		
 	}
+	
 }
