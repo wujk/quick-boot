@@ -189,10 +189,10 @@ public final class ClassUtil {
 		}
 	}
 	
-	public static void main(String[] args) throws ClassNotFoundException {
-		
-		URLClassLoader(new File("D:\\maven\\com\\wujk\\quick-hibernate\\0.0.1-SNAPSHOT\\quick-hibernate-0.0.1-SNAPSHOT.jar"));
-		classForName("com.wujk.hibernate.util.HibernateHelper");
+	public static void main(String[] args) throws Exception {
+		//classForName("com.wujk.hibernate.util.HibernateHelper");
+		URLClassLoader(new File("C:\\Users\\ci11951\\Desktop\\ab.jar"));
+		classForName("com.wujk.hibernate.util.HibernateHelper", true).newInstance();
 	}
 
 }
