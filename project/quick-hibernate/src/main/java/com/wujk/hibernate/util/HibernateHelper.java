@@ -21,7 +21,7 @@ public class HibernateHelper {
 	private ThreadLocal<Session> threadLocal = new ThreadLocal<Session>();
 	
 	public HibernateHelper() {
-		final StandardServiceRegistry registry = new StandardServiceRegistryBuilder().configure("cfg/xml/hibernate.cfg.xml").build();
+		final StandardServiceRegistry registry = new StandardServiceRegistryBuilder().configure("cfg/hibernate.cfg.xml").build();
 		try {
 			MetadataSources metadataSources = new MetadataSources(registry);
 			sessionFactory = metadataSources.buildMetadata().buildSessionFactory();
@@ -32,7 +32,7 @@ public class HibernateHelper {
 	}
 	
 	public void rebuildSessionFactory() {
-		final StandardServiceRegistry registry = new StandardServiceRegistryBuilder().configure("cfg/xml/hibernate.cfg.xml").build();
+		final StandardServiceRegistry registry = new StandardServiceRegistryBuilder().configure("cfg/hibernate.cfg.xml").build();
 		try {
 			sessionFactory = new MetadataSources(registry).buildMetadata().buildSessionFactory();
 		} catch (Exception e) {
@@ -97,6 +97,9 @@ public class HibernateHelper {
 		if (session != null) {
 			session.getTransaction().rollback();
 		}
+	}
+	public static void main(String[] args) {
+		new HibernateHelper();
 	}
 	
 }

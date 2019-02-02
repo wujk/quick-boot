@@ -21,7 +21,7 @@ public class HibernateUtil {
 	private static ThreadLocal<Session> threadLocal = new ThreadLocal<Session>();
 	
 	static {
-		final StandardServiceRegistry registry = new StandardServiceRegistryBuilder().configure("cfg/xml/hibernate.cfg.xml").build();
+		final StandardServiceRegistry registry = new StandardServiceRegistryBuilder().configure("cfg/hibernate.cfg.xml").build();
 		try {
 			MetadataSources metadataSources = new MetadataSources(registry);
 			sessionFactory = metadataSources.buildMetadata().buildSessionFactory();
@@ -32,7 +32,7 @@ public class HibernateUtil {
 	}
 	
 	public static void rebuildSessionFactory() {
-		final StandardServiceRegistry registry = new StandardServiceRegistryBuilder().configure("cfg/xml/hibernate.cfg.xml").build();
+		final StandardServiceRegistry registry = new StandardServiceRegistryBuilder().configure("cfg/hibernate.cfg.xml").build();
 		try {
 			sessionFactory = new MetadataSources(registry).buildMetadata().buildSessionFactory();
 		} catch (Exception e) {

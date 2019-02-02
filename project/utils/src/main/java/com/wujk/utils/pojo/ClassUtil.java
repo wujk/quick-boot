@@ -2,6 +2,7 @@ package com.wujk.utils.pojo;
 
 import java.io.File;
 import java.io.FileFilter;
+import java.lang.reflect.Method;
 import java.net.JarURLConnection;
 import java.net.URL;
 import java.util.Enumeration;
@@ -36,13 +37,14 @@ import org.slf4j.LoggerFactory;
  */
 public final class ClassUtil {
 	private static final Logger logger = LoggerFactory.getLogger(ClassUtil.class);
+
 	/**
 	 * 获取类加载器
 	 */
 	public static ClassLoader getClassLoader() {
 		return Thread.currentThread().getContextClassLoader();
 	}
-	
+
 	/**
 	 * className:类的全限定名，如：com.org.prj
 	 * initialize:如果为true，则会在返回Class对象之前，对该类型做连接，校验，初始化操作。(如：执行static块中的代码)，initialize默认需要初始化。
@@ -57,7 +59,7 @@ public final class ClassUtil {
 	public static Class<?> classForName(String className) throws ClassNotFoundException {
 		return Class.forName(className);
 	}
-	
+
 	public static Class<?> classForName(String className, boolean initialize) throws ClassNotFoundException {
 		return classForName(className, initialize, null);
 	}
@@ -84,7 +86,7 @@ public final class ClassUtil {
 	public static Class<?> loadClass(String className) throws ClassNotFoundException {
 		return getClassLoader().loadClass(className);
 	}
-	
+
 	/**
 	 * 获取指定包名下的所有类
 	 */
@@ -166,7 +168,31 @@ public final class ClassUtil {
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 		}
-		
+	}
+
+	/**
+	 * 动态加载类对象
+	 * @param file
+	 */
+	public static void URLClassLoader(File file) {
+		try {
+			// 将File类型转为URL类型，file为jar包路径
+			URL url = file.toURI().toURL();
+			// 得到系统类加载器
+			java.net.URLClassLoader urlClassLoader = (java.net.URLClassLoader) ClassLoader.getSystemClassLoader();
+			// 因为URLClassLoader中的addURL方法的权限为protected所以只能采用反射的方法调用addURL方法
+			Method add = java.net.URLClassLoader.class.getDeclaredMethod("addURL", new Class[] { URL.class });
+			add.setAccessible(true);
+			add.invoke(urlClassLoader, new Object[] { url });
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 	
+	public static void main(String[] args) throws ClassNotFoundException {
+		
+		URLClassLoader(new File("D:\\maven\\com\\wujk\\quick-hibernate\\0.0.1-SNAPSHOT\\quick-hibernate-0.0.1-SNAPSHOT.jar"));
+		classForName("com.wujk.hibernate.util.HibernateHelper");
+	}
+
 }
