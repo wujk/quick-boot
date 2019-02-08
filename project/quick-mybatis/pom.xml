@@ -43,5 +43,10 @@
 			<artifactId>utils</artifactId>
 			<version>${utils.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>com.wujk</groupId>
+			<artifactId>quick-db</artifactId>
+			<version>${utils.version}</version>
+		</dependency>
 	</dependencies>
 </project>

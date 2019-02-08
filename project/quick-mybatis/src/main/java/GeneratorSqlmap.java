@@ -1,4 +1,3 @@
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,10 +12,8 @@ public class GeneratorSqlmap {
 
 		List<String> warnings = new ArrayList<String>();
 		boolean overwrite = true;
-		//鎸囧畾 閫嗗悜宸ョ▼閰嶇疆鏂囦欢
-		File configFile = new File("generatorConfig.xml"); 
 		ConfigurationParser cp = new ConfigurationParser(warnings);
-		Configuration config = cp.parseConfiguration(configFile);
+		Configuration config = cp.parseConfiguration(getClass().getClassLoader().getResourceAsStream("generatorConfig.xml"));
 		DefaultShellCallback callback = new DefaultShellCallback(overwrite);
 		MyBatisGenerator myBatisGenerator = new MyBatisGenerator(config,
 				callback, warnings);
