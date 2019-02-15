@@ -1,27 +1,37 @@
 package com.wujk.redis;
 
-public class Demo extends RedisCount<Long> {
+import java.io.IOException;
+import java.util.Collection;
+import java.util.HashSet;
 
-	public Demo(String key, Long floor, Long top) {
-		super(key, floor, top);
-	}
-	
-	public Demo(String key, Long floor, Long top, long expire) {
-		super(key, floor, top, expire);
-	}
+import com.wujk.redis.util.RedisUtil;
 
-	public static void main(String[] args) {
-		Demo demo = new Demo("a", 0L, 10L, 20000L);
-		for (int a= 0; a < 100; a++) {
-			new Thread(new Runnable() {
-				
-				@Override
-				public void run() {
-					demo.count(1L);
-				}
-			}).start();
-		}
+public class Demo {
+
+	public static void main(String[] args) throws IOException {
+		RedisUtil redisUtil = new RedisUtil();
+		Collection<String> clusterNodes = new HashSet<>();
+		clusterNodes.add("192.168.140.159:7001");
+		clusterNodes.add("192.168.140.159:7002");
+		clusterNodes.add("192.168.140.159:7003");
+		clusterNodes.add("192.168.140.159:7004");
+		clusterNodes.add("192.168.140.159:7005");
+		clusterNodes.add("192.168.140.159:7006");
+		redisUtil.setClusterNodes(clusterNodes );
+		Integer a = (Integer) redisUtil.getRedisTemplateCluster().opsForValue().get("a");
+		redisUtil.destoryCluster();
+		//redisUtil.getRedisTemplateCluster().opsForValue().set("b", 10000);
 		
+		/*String a = redisUtil.getJedisCluster().get("a");
+		
+		redisUtil.getJedisCluster().close();*/
+		System.out.println(a);
+		a = (Integer) redisUtil.getRedisTemplateCluster().opsForValue().get("a");
+		System.out.println(a);
+		redisUtil.destoryCluster();
+		a = (Integer) redisUtil.getRedisTemplateCluster().opsForValue().get("a");
+		System.out.println(a);
+		redisUtil.destoryCluster();
 	}
 
 }
