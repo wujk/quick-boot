@@ -36,8 +36,8 @@ public class SendCloudBuilder {
 		mail.setContent(content);
 		
 		MailAddressReceiver receiver = new MailAddressReceiver();
-		receiver.addTo("qin.zhu@autoliv.com");
-		receiver.addCc("1021815383@qq.com");
+		receiver.addTo("1021815383@qq.com");
+		receiver.addCc("1422401530@qq.com");
 		mail.setTo(receiver);
 		ResponseData responseData = SendCloudBuilder.build().sendMail(mail);
 		System.out.println(responseData.toString());
