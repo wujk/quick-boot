@@ -6,6 +6,7 @@ import com.wujk.utils.pojo.ObjectUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.sql.DataSource;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
@@ -19,9 +20,9 @@ import java.util.concurrent.locks.ReentrantReadWriteLock.WriteLock;
 * @author kevin
 * @date 2019年3月8日 下午2:49:49
  */
-public abstract class SpringDataBaseManager<T, S, D> implements SessionFactory<T>, Session<S>, DataSource<D> {
+public abstract class DataBaseManager<T, S> implements SessionFactory<T>, Session<S>, DataSourcePool {
 
-	private Logger logger = LoggerFactory.getLogger(SpringDataBaseManager.class);
+	private Logger logger = LoggerFactory.getLogger(DataBaseManager.class);
 
 	// 加载数据源与校验数据源超时需要互斥，为了获取数据源效率用读写锁，读锁可以多个线程同时加载，写锁只能一个线程获取
 	private ReentrantReadWriteLock readWriteLock = new ReentrantReadWriteLock();
@@ -30,19 +31,19 @@ public abstract class SpringDataBaseManager<T, S, D> implements SessionFactory<T
 
 	private LruCache<String> cache = null;
 
-	public SpringDataBaseManager() {
+	public DataBaseManager() {
 		this(true, 30, null);
 	}
 
-	public SpringDataBaseManager(boolean isholder) {
+	public DataBaseManager(boolean isholder) {
 		this(isholder, 30, null);
 	}
 
-	public SpringDataBaseManager(int number) {
+	public DataBaseManager(int number) {
 		this(true, number, null);
 	}
 
-	public SpringDataBaseManager(boolean isholder, int number, T sqlSessionFactory) {
+	public DataBaseManager(boolean isholder, int number, T sqlSessionFactory) {
 		this.isholder = isholder;
 		if (isholder) {
 			logger.info("@@@@@@开启持久缓存，缓存大小" + number + "@@@@@@");
@@ -109,6 +110,9 @@ public abstract class SpringDataBaseManager<T, S, D> implements SessionFactory<T
 								T sessionFactory = (T) map.get(FACTORY);
 								if (sessionFactory != null) {
 									closeSessionFactory(sessionFactory);
+									map.clear();
+									factoryMap.remove(key);
+									map = null;
 								}
 							}
 						}
@@ -323,7 +327,7 @@ public abstract class SpringDataBaseManager<T, S, D> implements SessionFactory<T
 			}
 			// 加入sqlfactory缓存
 			Map<String, Object> map = new HashMap<>();
-			map.put(FACTORY, sessionFactory());
+			map.put(FACTORY, createSessionFactory(dataSource));
 			factoryMap.put(dataBase.getDataBaseId(), map);
 			logger.info("数据库初始化完成：" + dataBase.getDataBaseId());
 			return true;
