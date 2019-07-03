@@ -17,6 +17,9 @@ import javax.sql.DataSource;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * mybatais多数据源
+ */
 public class MybatisMutiManager extends DataBaseManager<SqlSessionFactory, SqlSession> {
     private Logger logger = LoggerFactory.getLogger(DataBaseManager.class);
 
