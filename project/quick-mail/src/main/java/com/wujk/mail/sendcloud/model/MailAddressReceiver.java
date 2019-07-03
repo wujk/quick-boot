@@ -1,8 +1,8 @@
 package com.wujk.mail.sendcloud.model;
 
-import com.chinacareer.geek.common.utils.sendcloud.config.Config;
-import com.chinacareer.geek.common.utils.sendcloud.exception.ReceiverException;
-import org.apache.commons.collections4.CollectionUtils;
+import com.wujk.mail.sendcloud.config.Config;
+import com.wujk.mail.sendcloud.exception.ReceiverException;
+import com.wujk.utils.pojo.ObjectUtil;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -78,12 +78,12 @@ public class MailAddressReceiver implements Receiver {
 	}
 
 	public boolean validate() throws ReceiverException {
-		if (CollectionUtils.isEmpty(to))
+		if (ObjectUtil.isEmpty(to))
 			throw new ReceiverException("收件人为空");
 		int receivers = to.size();
-		if (CollectionUtils.isNotEmpty(cc))
+		if (!ObjectUtil.isEmpty(cc))
 			receivers += cc.size();
-		if (CollectionUtils.isNotEmpty(bcc))
+		if (!ObjectUtil.isEmpty(bcc))
 			receivers += bcc.size();
 		if (receivers > Config.MAX_RECEIVERS)
 			throw new ReceiverException("收件人超出上限");
@@ -101,7 +101,7 @@ public class MailAddressReceiver implements Receiver {
 	}
 
 	public String getCcString() {
-		if (CollectionUtils.isEmpty(cc))
+		if (ObjectUtil.isEmpty(cc))
 			return null;
 		StringBuilder sb = new StringBuilder();
 		for (String address : cc) {
@@ -113,7 +113,7 @@ public class MailAddressReceiver implements Receiver {
 	}
 
 	public String getBccString() {
-		if (CollectionUtils.isEmpty(bcc))
+		if (ObjectUtil.isEmpty(bcc))
 			return null;
 		StringBuilder sb = new StringBuilder();
 		for (String address : bcc) {

@@ -1,8 +1,8 @@
 package com.wujk.mail.sendcloud.model;
 
-import com.chinacareer.geek.common.utils.sendcloud.config.Config;
-import com.chinacareer.geek.common.utils.sendcloud.exception.ReceiverException;
-import org.springframework.util.CollectionUtils;
+import com.wujk.mail.sendcloud.config.Config;
+import com.wujk.mail.sendcloud.exception.ReceiverException;
+import com.wujk.utils.pojo.ObjectUtil;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -39,7 +39,7 @@ public class AddressListReceiver implements Receiver {
 	}
 
 	public boolean validate() throws ReceiverException {
-		if (CollectionUtils.isEmpty(invokeNames))
+		if (ObjectUtil.isEmpty(invokeNames))
 			throw new ReceiverException("地址列表为空");
 		if (invokeNames.size() > Config.MAX_MAILLIST)
 			throw new ReceiverException("地址列表超过上限");

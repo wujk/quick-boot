@@ -1,6 +1,6 @@
 package com.wujk.mail.sendcloud.model;
 
-import com.chinacareer.geek.common.utils.sendcloud.exception.ContentException;
+import com.wujk.mail.sendcloud.exception.ContentException;
 
 public interface Content {
 	public boolean useTemplate();

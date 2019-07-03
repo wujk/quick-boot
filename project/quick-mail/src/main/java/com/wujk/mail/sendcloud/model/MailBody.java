@@ -1,6 +1,6 @@
 package com.wujk.mail.sendcloud.model;
 
-import com.chinacareer.geek.common.utils.sendcloud.exception.BodyException;
+import com.wujk.mail.sendcloud.exception.BodyException;
 import net.sf.json.JSONObject;
 import org.apache.commons.lang3.StringUtils;
 
@@ -97,7 +97,7 @@ public class MailBody {
 	/**
 	 * 添加附件
 	 * 
-	 * @param file
+	 * @param stream
 	 */
 	public void addAttachments(InputStream stream) {
 		if (attachments == null)

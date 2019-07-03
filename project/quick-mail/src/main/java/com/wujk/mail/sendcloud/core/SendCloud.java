@@ -1,14 +1,14 @@
 package com.wujk.mail.sendcloud.core;
 
-import com.chinacareer.geek.common.utils.sendcloud.config.Config;
-import com.chinacareer.geek.common.utils.sendcloud.config.Credential;
-import com.chinacareer.geek.common.utils.sendcloud.model.*;
-import com.chinacareer.geek.common.utils.sendcloud.model.TextContent.ScContentType;
-import com.chinacareer.geek.common.utils.sendcloud.util.ResponseData;
+import com.wujk.mail.sendcloud.config.Config;
+import com.wujk.mail.sendcloud.config.Credential;
+import com.wujk.mail.sendcloud.model.*;
+import com.wujk.mail.sendcloud.util.ResponseData;
+import com.wujk.utils.pojo.ObjectUtil;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import net.sf.json.util.JSONUtils;
-import org.apache.commons.collections4.MapUtils;
+import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.Consts;
 import org.apache.http.HttpResponse;
@@ -26,7 +26,6 @@ import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.Asserts;
 import org.apache.http.util.EntityUtils;
-import org.springframework.util.CollectionUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -192,7 +191,7 @@ public class SendCloud {
 	/**
 	 * 发送邮件
 	 * 
-	 * @param credential
+	 * @param mail
 	 *            身份认证
 	 * @param mail
 	 *            邮件
@@ -203,7 +202,7 @@ public class SendCloud {
 		Asserts.notBlank(Config.api_key, "api_key");
 		mail.validate();
 		Credential credential = new Credential(Config.api_user, Config.api_key);
-		if (CollectionUtils.isEmpty(mail.getBody().getAttachments())) {
+		if (ObjectUtil.isEmpty(mail.getBody().getAttachments())) {
 			return post(credential, mail);
 		} else {
 			return multipartPost(credential, mail);
@@ -238,7 +237,7 @@ public class SendCloud {
 			params.add(new BasicNameValuePair("templateInvokeName", content.getTemplateInvokeName()));
 		} else {
 			TextContent content = (TextContent) mail.getContent();
-			if (content.getContent_type().equals(ScContentType.html)) {
+			if (content.getContent_type().equals(TextContent.ScContentType.html)) {
 				params.add(new BasicNameValuePair("html", content.getText()));
 			} else {
 				params.add(new BasicNameValuePair("plain", content.getText()));
@@ -316,7 +315,7 @@ public class SendCloud {
 			entity.addTextBody("templateInvokeName", content.getTemplateInvokeName(), TEXT_PLAIN);
 		} else {
 			TextContent content = (TextContent) mail.getContent();
-			if (content.getContent_type().equals(ScContentType.html)) {
+			if (content.getContent_type().equals(TextContent.ScContentType.html)) {
 				entity.addTextBody("html", content.getText(), TEXT_PLAIN);
 			} else {
 				entity.addTextBody("plain", content.getText(), TEXT_PLAIN);

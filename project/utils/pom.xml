@@ -22,6 +22,9 @@
 		<commons-lang>2.6</commons-lang>
 		<jep.version>2.4.2</jep.version>
 		<jsoup.version>1.11.3</jsoup.version>
+		<httpmime.version>4.5.9</httpmime.version>
+		<httpcore.version>4.4.11</httpcore.version>
+		<json.version>2.4</json.version>
 	</properties>
 	<dependencyManagement>
 		<dependencies>
@@ -101,6 +104,24 @@
 				<artifactId>commons-lang</artifactId>
 				<version>${commons-lang}</version>
 			</dependency>
+			<!-- https://mvnrepository.com/artifact/org.apache.httpcomponents/httpmime -->
+			<dependency>
+				<groupId>org.apache.httpcomponents</groupId>
+				<artifactId>httpmime</artifactId>
+				<version>${httpmime.version}</version>
+			</dependency>
+			<!-- https://mvnrepository.com/artifact/org.apache.httpcomponents/httpcore -->
+			<dependency>
+				<groupId>org.apache.httpcomponents</groupId>
+				<artifactId>httpcore</artifactId>
+				<version>${httpcore.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>net.sf.json-lib</groupId>
+				<artifactId>json-lib</artifactId>
+				<version>${json.version}</version>
+				<classifier>jdk15</classifier>
+			</dependency>
 		</dependencies>
 	</dependencyManagement>
 	<dependencies>
@@ -159,6 +180,19 @@
 		<dependency>
 			<groupId>commons-lang</groupId>
 			<artifactId>commons-lang</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.httpcomponents</groupId>
+			<artifactId>httpmime</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.httpcomponents</groupId>
+			<artifactId>httpcore</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>net.sf.json-lib</groupId>
+			<artifactId>json-lib</artifactId>
+			<classifier>jdk15</classifier>
 		</dependency>
 	</dependencies>
 </project>

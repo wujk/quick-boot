@@ -1,13 +1,13 @@
 package com.wujk.mail.sendcloud.builder;
 
-import com.chinacareer.geek.common.utils.sendcloud.config.Config;
-import com.chinacareer.geek.common.utils.sendcloud.core.SendCloud;
-import com.chinacareer.geek.common.utils.sendcloud.model.MailAddressReceiver;
-import com.chinacareer.geek.common.utils.sendcloud.model.MailBody;
-import com.chinacareer.geek.common.utils.sendcloud.model.SendCloudMail;
-import com.chinacareer.geek.common.utils.sendcloud.model.TextContent;
-import com.chinacareer.geek.common.utils.sendcloud.model.TextContent.ScContentType;
-import com.chinacareer.geek.common.utils.sendcloud.util.ResponseData;
+
+import com.wujk.mail.sendcloud.config.Config;
+import com.wujk.mail.sendcloud.core.SendCloud;
+import com.wujk.mail.sendcloud.model.MailAddressReceiver;
+import com.wujk.mail.sendcloud.model.MailBody;
+import com.wujk.mail.sendcloud.model.SendCloudMail;
+import com.wujk.mail.sendcloud.model.TextContent;
+import com.wujk.mail.sendcloud.util.ResponseData;
 
 public class SendCloudBuilder {
 
@@ -31,7 +31,7 @@ public class SendCloudBuilder {
 		mail.setBody(body);
 		
 		TextContent content = new TextContent();
-		content.setContent_type(ScContentType.plain);
+		content.setContent_type(TextContent.ScContentType.plain);
 		content.setText("测试邮件内容");
 		mail.setContent(content);
 		

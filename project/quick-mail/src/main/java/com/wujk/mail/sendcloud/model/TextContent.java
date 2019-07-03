@@ -1,8 +1,8 @@
 package com.wujk.mail.sendcloud.model;
 
 
-import com.chinacareer.geek.common.utils.sendcloud.config.Config;
-import com.chinacareer.geek.common.utils.sendcloud.exception.ContentException;
+import com.wujk.mail.sendcloud.config.Config;
+import com.wujk.mail.sendcloud.exception.ContentException;
 import org.apache.commons.lang3.StringUtils;
 
 /**
