@@ -1,4 +1,4 @@
-package com.wujk.spring.jta;
+package com.wujk.spring.db.jta;
 
 import com.atomikos.icatch.jta.UserTransactionImp;
 import com.atomikos.icatch.jta.UserTransactionManager;

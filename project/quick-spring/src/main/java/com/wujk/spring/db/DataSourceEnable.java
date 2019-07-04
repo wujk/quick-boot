@@ -1,4 +1,4 @@
-package com.wujk.spring.jta;
+package com.wujk.spring.db;
 
 import org.springframework.stereotype.Component;
 
@@ -8,10 +8,10 @@ import java.lang.annotation.*;
 @Target({ElementType.METHOD, ElementType.TYPE})
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
-public @interface AtomikosEnable {
+public @interface DataSourceEnable {
 
     String value() default "";
 
-    String transactionManagerName() default "atomikosJta";
+    String transactionManagerName() default "transactionManager";
 
 }

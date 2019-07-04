@@ -1,6 +1,6 @@
-package com.wujk.spring.aop;
+package com.wujk.spring.db.jta.aop;
 
-import com.wujk.spring.jta.AtomikosEnable;
+import com.wujk.spring.db.jta.AtomikosEnable;
 import com.wujk.spring.util.SpringContextUtils;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
@@ -19,8 +19,8 @@ import javax.annotation.Resource;
 
 @Component
 @Aspect
-public class TransactionAop {
-    private Logger logger = LoggerFactory.getLogger(TransactionAop.class);
+public class AtomikosTransactionAop {
+    private Logger logger = LoggerFactory.getLogger(AtomikosTransactionAop.class);
 
     @Resource(name = "atomikosJta")
     private PlatformTransactionManager platformTransactionManager;
@@ -28,7 +28,7 @@ public class TransactionAop {
     @Resource(name = "springContextUtils")
     private SpringContextUtils<JtaTransactionManager> springContextUtils;
 
-    @Pointcut("@annotation(com.wujk.spring.jta.AtomikosEnable)")
+    @Pointcut("@annotation(com.wujk.spring.db.jta.AtomikosEnable)")
     private void transactional() {
     }
 
