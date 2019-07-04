@@ -15,7 +15,7 @@
 		<fastjson.version>1.2.47</fastjson.version>
 		<pinyin4j.version>2.5.1</pinyin4j.version>
 		<cron4j.version>2.2.5</cron4j.version>
-		<jackson.version>2.9.6</jackson.version>
+		<jackson.version>2.9.9</jackson.version>
 		<slf4j.version>1.7.25</slf4j.version>
 		<jaxb.version>2.3.0</jaxb.version>
 		<commons-lang3>3.7</commons-lang3>

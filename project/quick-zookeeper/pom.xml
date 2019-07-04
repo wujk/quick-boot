@@ -11,7 +11,7 @@
 	<name>zookeeper</name>
 	<description>zookeeper</description>
 	<properties>
-		<zookeeper.version>3.4.12</zookeeper.version>
+		<zookeeper.version>3.4.14</zookeeper.version>
 	</properties>
 	<dependencyManagement>
 		<dependencies>
