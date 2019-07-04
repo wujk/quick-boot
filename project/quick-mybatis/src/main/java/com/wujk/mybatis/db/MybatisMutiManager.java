@@ -15,7 +15,6 @@ import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.core.io.support.ResourcePatternResolver;
 
 import javax.sql.DataSource;
-import javax.sql.XADataSource;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -23,7 +22,7 @@ import java.util.List;
 /**
  * mybatais多数据源
  */
-public class MybatisMutiManager extends DataBaseManager<SqlSessionFactory, SqlSession> {
+public class MybatisMutiManager<M> extends DataBaseManager<SqlSessionFactory, SqlSession> implements MapperInterface<M>{
     private Logger logger = LoggerFactory.getLogger(DataBaseManager.class);
 
     @Override
@@ -52,6 +51,19 @@ public class MybatisMutiManager extends DataBaseManager<SqlSessionFactory, SqlSe
         return factoryBean.getObject();
     }
 
+    @Override
+    public M getMapper(Class<M> clazz, String dataBaseId) {
+        SqlSession session = getCurrentSqlSession(dataBaseId);
+        try {
+            if (session == null || session.getConnection().isClosed()) {
+                SqlSessionFactory sessionFactory = getSqlSessionFactory(dataBaseId);
+                setCurrentSqlSession(dataBaseId, sessionFactory.openSession());
+            }
+        } catch (SQLException e) {
+            logger.error(e.getMessage(), e);
+        }
+        return getCurrentSqlSession(dataBaseId).getMapper(clazz);
+    }
 
     @Override
     public SqlSessionFactory createSessionFactory(DataSource dataSource) throws Exception {
@@ -70,16 +82,12 @@ public class MybatisMutiManager extends DataBaseManager<SqlSessionFactory, SqlSe
     }
 
     @Override
-    public DataSource getDataSourceFromFactory(DataBase dataBase) {
+    public Object getDataSourceFromFactory(DataBase dataBase) {
         return ((SqlSessionFactory)getSqlSessionFactory(dataBase.getDataBaseId())).getConfiguration().getEnvironment().getDataSource();
     }
 
     @Override
-    public DataSource createDataSource(DataBase dataBase) throws SQLException {
-        return createXaDataSource(dataBase);
-    }
-
-    private DataSource createXaDataSource(DataBase dataBase) throws SQLException {
+    public Object createDataSource(DataBase dataBase) throws SQLException {
         DruidXADataSource dataSource = new DruidXADataSource();
         dataSource.setUrl(dataBase.getUrl());
         dataSource.setUsername(dataBase.getUserName());
@@ -218,4 +226,5 @@ public class MybatisMutiManager extends DataBaseManager<SqlSessionFactory, SqlSe
     public void setFilters(String filters) {
         this.filters = filters;
     }
+
 }

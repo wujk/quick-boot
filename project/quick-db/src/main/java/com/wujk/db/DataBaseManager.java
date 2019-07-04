@@ -59,7 +59,7 @@ public abstract class DataBaseManager<T, S> implements SessionFactory<T>, Sessio
 
 	private static final String FACTORY = "FACTORY";
 
-	protected ThreadLocal<S> sessionMap = new ThreadLocal<S>();
+	protected ThreadLocal<Map<String, S>> sessionMap = new ThreadLocal<Map<String, S>>();
 
 	private Long expireTimeOfFactory = 7200000L;  // 2小时超时时间
 
@@ -210,12 +210,18 @@ public abstract class DataBaseManager<T, S> implements SessionFactory<T>, Sessio
 		return (T) sqlSessionFactory;
 	}
 
-	public S getCurrentSqlSession() {
-		return (S) sessionMap.get();
+	public S getCurrentSqlSession(String dataBaseId) {
+		Map<String, S> map = sessionMap.get();
+		if (map == null) {
+			return null;
+		}
+		return map.get(dataBaseId) ;
 	}
 
-	public void setCurrentSqlSession(S session) {
-		sessionMap.set(session);
+	public void setCurrentSqlSession(String dataBaseId, S session) {
+		Map<String, S> map = new HashMap<String, S>();
+		map.put(dataBaseId, session);
+		sessionMap.set(map);
 	}
 
 	public Map<String, T> getMap() {
@@ -230,11 +236,11 @@ public abstract class DataBaseManager<T, S> implements SessionFactory<T>, Sessio
 		return resultMap;
 	}
 
-	public ThreadLocal<S> getSessionMap() {
+	public ThreadLocal<Map<String, S>> getSessionMap() {
 		return sessionMap;
 	}
 
-	public void setSessionMap(ThreadLocal<S> sessionMap) {
+	public void setSessionMap(ThreadLocal<Map<String, S>> sessionMap) {
 		this.sessionMap = sessionMap;
 	}
 
@@ -320,7 +326,7 @@ public abstract class DataBaseManager<T, S> implements SessionFactory<T>, Sessio
 				logger.info("数据库配置不存在");
 				return false;
 			}
-			DataSource dataSource = createDataSource(dataBase);
+			DataSource dataSource = (DataSource) createDataSource(dataBase);
 			if (dataSource == null) {
 				logger.info("初始化数据源失败：" + dataBase.getDataBaseId());
 				return false;

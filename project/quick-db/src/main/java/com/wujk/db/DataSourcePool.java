@@ -10,14 +10,14 @@ public interface DataSourcePool {
      * @param dataBase
      * @return
      */
-    public DataSource getDataSourceFromFactory(DataBase dataBase);
+    public Object getDataSourceFromFactory(DataBase dataBase);
 
     /**
      * 创建连接池
      * @param dataBase
      * @return
      */
-    public DataSource createDataSource(DataBase dataBase) throws SQLException;
+    public Object createDataSource(DataBase dataBase) throws SQLException;
 
 
 }
