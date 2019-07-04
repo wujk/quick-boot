@@ -7,12 +7,12 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Component;
 
-@Component
+@Component("springContextUtils")
 public class SpringContextUtils<T> implements ApplicationContextAware {
 	private ApplicationContext applicationContext;
 
-	public void setApplicationContext(ApplicationContext arg0) throws BeansException {
-		applicationContext = arg0;
+	public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+		this.applicationContext = applicationContext;
 	}
 
 	/**

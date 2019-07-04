@@ -1,6 +1,7 @@
 package com.wujk.db;
 
 import javax.sql.DataSource;
+import java.sql.SQLException;
 
 public interface DataSourcePool {
 
@@ -16,7 +17,7 @@ public interface DataSourcePool {
      * @param dataBase
      * @return
      */
-    public DataSource createDataSource(DataBase dataBase);
+    public DataSource createDataSource(DataBase dataBase) throws SQLException;
 
 
 }

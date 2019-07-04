@@ -1,6 +1,7 @@
 package com.wujk.mybatis.db;
 
 import com.alibaba.druid.pool.xa.DruidXADataSource;
+import com.atomikos.jdbc.AtomikosDataSourceBean;
 import com.wujk.db.DataBase;
 import com.wujk.db.DataBaseManager;
 import com.wujk.utils.pojo.ObjectUtil;
@@ -10,6 +11,7 @@ import org.apache.ibatis.session.SqlSessionFactory;
 import org.mybatis.spring.SqlSessionFactoryBean;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.core.io.support.ResourcePatternResolver;
@@ -19,11 +21,12 @@ import javax.sql.XADataSource;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * mybatais多数据源
  */
-public class MybatisMutiManager extends DataBaseManager<SqlSessionFactory, SqlSession> {
+public class MybatisMutiXAManager extends DataBaseManager<SqlSessionFactory, SqlSession> {
     private Logger logger = LoggerFactory.getLogger(DataBaseManager.class);
 
     @Override
@@ -76,10 +79,17 @@ public class MybatisMutiManager extends DataBaseManager<SqlSessionFactory, SqlSe
 
     @Override
     public DataSource createDataSource(DataBase dataBase) throws SQLException {
-        return createXaDataSource(dataBase);
+        return createAtomikosDataSourceBean(createXaDataSource(dataBase));
     }
 
-    private DataSource createXaDataSource(DataBase dataBase) throws SQLException {
+    public AtomikosDataSourceBean createAtomikosDataSourceBean(XADataSource xaDataSource) {
+        AtomikosDataSourceBean atomikosDataSourceBean = new AtomikosDataSourceBean();
+        atomikosDataSourceBean.setXaDataSource(xaDataSource);
+        atomikosDataSourceBean.setUniqueResourceName(UUID.randomUUID().toString());
+        return atomikosDataSourceBean;
+    }
+
+    private XADataSource createXaDataSource(DataBase dataBase) throws SQLException {
         DruidXADataSource dataSource = new DruidXADataSource();
         dataSource.setUrl(dataBase.getUrl());
         dataSource.setUsername(dataBase.getUserName());
