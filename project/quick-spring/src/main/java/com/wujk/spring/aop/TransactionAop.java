@@ -54,7 +54,7 @@ public class TransactionAop {
             logger.error(e.getMessage(), e);
             throw new Exception(e);
         } finally {
+            return obj;
         }
-        return obj;
     }
 }
