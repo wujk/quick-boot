@@ -15,7 +15,7 @@ import java.util.UUID;
 /**
  * mybatais多数据源
  */
-public class MybatisMutiXAManager<M> extends MybatisMutiManager<M> {
+public class MybatisMutiXAManager extends MybatisMutiManager {
     private Logger logger = LoggerFactory.getLogger(DataBaseManager.class);
 
     @Override
@@ -30,7 +30,7 @@ public class MybatisMutiXAManager<M> extends MybatisMutiManager<M> {
 
 
     @Override
-    public DataSource createDataSource(DataBase dataBase) throws SQLException {
+    public DataSource createDataSource(DataBase dataBase) {
         return createAtomikosDataSourceBean((XADataSource)createDataSource(dataBase));
     }
 

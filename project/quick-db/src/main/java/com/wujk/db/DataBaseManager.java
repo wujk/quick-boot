@@ -24,6 +24,8 @@ public abstract class DataBaseManager<T, S> implements SessionFactory<T>, Sessio
 
 	private Logger logger = LoggerFactory.getLogger(DataBaseManager.class);
 
+	public static final String BASE_DB_ID = "baseDB";
+
 	// 加载数据源与校验数据源超时需要互斥，为了获取数据源效率用读写锁，读锁可以多个线程同时加载，写锁只能一个线程获取
 	private ReentrantReadWriteLock readWriteLock = new ReentrantReadWriteLock();
 
@@ -51,6 +53,7 @@ public abstract class DataBaseManager<T, S> implements SessionFactory<T>, Sessio
 		}
 		this.sqlSessionFactory = sqlSessionFactory;
 	}
+
 	protected  T sqlSessionFactory;
 
 	protected Map<String, Map<String, Object>> factoryMap = new ConcurrentHashMap<>();
@@ -140,8 +143,8 @@ public abstract class DataBaseManager<T, S> implements SessionFactory<T>, Sessio
 		ReadLock readLock = readWriteLock.readLock();
 		try {
 			readLock.lock();
-			if (dataBaseId == null || "".equals(dataBaseId)) {
-				return (T) sqlSessionFactory;
+			if (dataBaseId == null || "".equals(dataBaseId) || BASE_DB_ID.equals(dataBaseId)) {
+				return (T) getBaseSessionFactory();
 			}
 			if (factoryMap.get(dataBaseId) == null) {
 				synchronized (FACTORY) {
@@ -152,11 +155,11 @@ public abstract class DataBaseManager<T, S> implements SessionFactory<T>, Sessio
 			}
 			Map<String, Object> factory = factoryMap.get(dataBaseId);
 			if (factory == null) {
-				return (T) sqlSessionFactory;
+				return (T) getBaseSessionFactory();
 			}
 			T sessionFactory = (T) factory.get(FACTORY);
 			if (sessionFactory == null) {
-				return (T) sqlSessionFactory;
+				return (T) getBaseSessionFactory();
 			}
 			synchronized (TTL) {
 				loadCache(dataBaseId, factory);
@@ -164,7 +167,7 @@ public abstract class DataBaseManager<T, S> implements SessionFactory<T>, Sessio
 			return sessionFactory;
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);
-			return (T) sqlSessionFactory;
+			return (T) getBaseSessionFactory();
 		} finally {
 			readLock.unlock();
 		}
@@ -207,7 +210,7 @@ public abstract class DataBaseManager<T, S> implements SessionFactory<T>, Sessio
 	* @throws
 	 */
 	public <T> T getBaseSqlSessionFactory() {
-		return (T) sqlSessionFactory;
+		return (T) getBaseSessionFactory();
 	}
 
 	public S getCurrentSqlSession(String dataBaseId) {
@@ -219,7 +222,10 @@ public abstract class DataBaseManager<T, S> implements SessionFactory<T>, Sessio
 	}
 
 	public void setCurrentSqlSession(String dataBaseId, S session) {
-		Map<String, S> map = new HashMap<String, S>();
+		Map<String, S> map = sessionMap.get();
+		if (map == null) {
+			map = new HashMap<String, S>();
+		}
 		map.put(dataBaseId, session);
 		sessionMap.set(map);
 	}

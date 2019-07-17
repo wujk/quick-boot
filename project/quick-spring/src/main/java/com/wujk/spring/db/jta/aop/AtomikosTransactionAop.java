@@ -9,6 +9,7 @@ import org.aspectj.lang.annotation.Pointcut;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
@@ -16,6 +17,7 @@ import org.springframework.transaction.jta.JtaTransactionManager;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import javax.annotation.Resource;
+import java.util.Map;
 
 @Component
 @Aspect
@@ -26,7 +28,7 @@ public class AtomikosTransactionAop {
     private PlatformTransactionManager platformTransactionManager;
 
     @Resource(name = "springContextUtils")
-    private SpringContextUtils<JtaTransactionManager> springContextUtils;
+    private SpringContextUtils springContextUtils;
 
     @Pointcut("@annotation(com.wujk.spring.db.jta.AtomikosEnable)")
     private void transactional() {

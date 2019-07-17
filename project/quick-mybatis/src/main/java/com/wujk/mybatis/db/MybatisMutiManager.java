@@ -71,6 +71,11 @@ public class MybatisMutiManager extends DataBaseManager<SqlSessionFactory, SqlSe
     }
 
     @Override
+    public SqlSessionFactory getBaseSessionFactory() {
+        return sqlSessionFactory;
+    }
+
+    @Override
     public void closeSessionFactory(SqlSessionFactory sessionFactory) {
         DruidXADataSource source = (DruidXADataSource) sessionFactory.getConfiguration().getEnvironment().getDataSource();
         logger.info("activeCount:" + source.getActiveCount());
@@ -150,81 +155,5 @@ public class MybatisMutiManager extends DataBaseManager<SqlSessionFactory, SqlSe
     private Integer removeAbandonedTimeout;
 
     private String filters;
-
-    public void setLogger(Logger logger) {
-        this.logger = logger;
-    }
-
-    public void setInitialSize(Integer initialSize) {
-        this.initialSize = initialSize;
-    }
-
-    public void setMinIdle(Integer minIdle) {
-        this.minIdle = minIdle;
-    }
-
-    public void setMaxActive(Integer maxActive) {
-        this.maxActive = maxActive;
-    }
-
-    public void setMaxWait(Integer maxWait) {
-        this.maxWait = maxWait;
-    }
-
-    public void setTimeBetweenEvictionRunsMillis(Long timeBetweenEvictionRunsMillis) {
-        this.timeBetweenEvictionRunsMillis = timeBetweenEvictionRunsMillis;
-    }
-
-    public void setMinEvictableIdleTimeMillis(Long minEvictableIdleTimeMillis) {
-        this.minEvictableIdleTimeMillis = minEvictableIdleTimeMillis;
-    }
-
-    public void setValidationQuery(String validationQuery) {
-        this.validationQuery = validationQuery;
-    }
-
-    public void setTestWhileIdle(Boolean testWhileIdle) {
-        this.testWhileIdle = testWhileIdle;
-    }
-
-    public void setTestOnBorrow(Boolean testOnBorrow) {
-        this.testOnBorrow = testOnBorrow;
-    }
-
-    public void setTestOnReturn(Boolean testOnReturn) {
-        this.testOnReturn = testOnReturn;
-    }
-
-    public void setPoolPreparedStatements(Boolean poolPreparedStatements) {
-        this.poolPreparedStatements = poolPreparedStatements;
-    }
-
-    public void setMaxPoolPreparedStatementPerConnectionSize(Integer maxPoolPreparedStatementPerConnectionSize) {
-        this.maxPoolPreparedStatementPerConnectionSize = maxPoolPreparedStatementPerConnectionSize;
-    }
-
-    public void setConnectionErrorRetryAttempts(Integer connectionErrorRetryAttempts) {
-        this.connectionErrorRetryAttempts = connectionErrorRetryAttempts;
-    }
-
-    public void setBreakAfterAcquireFailure(Boolean breakAfterAcquireFailure) {
-        this.breakAfterAcquireFailure = breakAfterAcquireFailure;
-    }
-
-    public void setRemoveAbandoned(Boolean removeAbandoned) {
-        this.removeAbandoned = removeAbandoned;
-    }
-
-    public void setLogAbandoned(Boolean logAbandoned) {
-        this.logAbandoned = logAbandoned;
-    }
-
-    public void setRemoveAbandonedTimeout(Integer removeAbandonedTimeout) {
-        this.removeAbandonedTimeout = removeAbandonedTimeout;
-    }
-
-    public void setFilters(String filters) {
-        this.filters = filters;
-    }
 
 }
