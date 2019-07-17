@@ -1,6 +1,6 @@
 package com.wujk.mybatis.db;
 
-public interface MapperInterface<M> {
+public interface MapperInterface {
 
-   public M getMapper(Class<M> clazz, String dataBaseId);
+   public <M> M getMapper(Class<M> clazz, String dataBaseId);
 }

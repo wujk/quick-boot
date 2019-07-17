@@ -8,7 +8,7 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Component;
 
 @Component("springContextUtils")
-public class SpringContextUtils<T> implements ApplicationContextAware {
+public class SpringContextUtils implements ApplicationContextAware {
 	private ApplicationContext applicationContext;
 
 	public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
@@ -40,7 +40,7 @@ public class SpringContextUtils<T> implements ApplicationContextAware {
 	 * @param c
 	 * @return
 	 */
-	public T getBeanByClass(Class<T> c) {
+	public <T> T getBeanByClass(Class<T> c) {
 		return applicationContext.getBean(c);
 	}
 
@@ -50,7 +50,7 @@ public class SpringContextUtils<T> implements ApplicationContextAware {
 	 * @param c
 	 * @return
 	 */
-	public Map<String, T> getBeansByClass(Class<T> c) {
+	public <T> Map<String, T> getBeansByClass(Class<T> c) {
 		return applicationContext.getBeansOfType(c);
 	}
 

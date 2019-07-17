@@ -22,7 +22,7 @@ import java.util.List;
 /**
  * mybatais多数据源
  */
-public class MybatisMutiManager<M> extends DataBaseManager<SqlSessionFactory, SqlSession> implements MapperInterface<M>{
+public class MybatisMutiManager extends DataBaseManager<SqlSessionFactory, SqlSession> implements MapperInterface {
     private Logger logger = LoggerFactory.getLogger(DataBaseManager.class);
 
     @Override
@@ -52,7 +52,7 @@ public class MybatisMutiManager<M> extends DataBaseManager<SqlSessionFactory, Sq
     }
 
     @Override
-    public M getMapper(Class<M> clazz, String dataBaseId) {
+    public <M> M getMapper(Class<M> clazz, String dataBaseId) {
         SqlSession session = getCurrentSqlSession(dataBaseId);
         try {
             if (session == null || session.getConnection().isClosed()) {
