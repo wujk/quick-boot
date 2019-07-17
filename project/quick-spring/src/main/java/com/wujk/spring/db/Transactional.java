@@ -34,7 +34,7 @@ public class Transactional {
 
     public void commit() {
         check();
-
+        p.get().commit(t.get());
     }
 
     public void rollback() {
