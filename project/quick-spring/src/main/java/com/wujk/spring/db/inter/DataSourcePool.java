@@ -1,6 +1,7 @@
-package com.wujk.db;
+package com.wujk.spring.db.inter;
 
-import javax.sql.DataSource;
+import com.wujk.spring.db.DataBase;
+
 import java.sql.SQLException;
 
 public interface DataSourcePool {

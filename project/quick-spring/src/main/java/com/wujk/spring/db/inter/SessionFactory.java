@@ -1,4 +1,4 @@
-package com.wujk.db;
+package com.wujk.spring.db.inter;
 
 import javax.sql.DataSource;
 

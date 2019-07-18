@@ -1,4 +1,4 @@
-package com.wujk.db;
+package com.wujk.spring.db;
 
 import java.io.Serializable;
 

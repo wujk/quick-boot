@@ -1,6 +1,8 @@
 package com.wujk.spring.db.distributed.tx;
 
-import org.apache.ibatis.session.SqlSession;
+import org.apache.zookeeper.WatchedEvent;
+import org.apache.zookeeper.Watcher;
+import org.apache.zookeeper.ZooKeeper;
 import org.apache.zookeeper.data.Stat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -9,7 +11,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CountDownLatch;
 
-public class ZookeeperTx {
+public abstract class ZookeeperTx<S> {
 
     private Logger logger = LoggerFactory.getLogger(ZookeeperTx.class);
 
@@ -33,9 +35,9 @@ public class ZookeeperTx {
 
     private String node;
 
-    Map<String, SqlSession> sessions = null;
+    private Map<String, S> sessions = null;
 
-    public void setSessions(Map<String, SqlSession> sessions) {
+    public void setSessions(Map<String, S> sessions) {
         this.sessions = sessions;
     }
 
@@ -55,13 +57,10 @@ public class ZookeeperTx {
                         logger.info("ZookeeperTx节点数据：" + nodeData);
                         if (TxStatus.SUCCESS.value.equals(nodeData)) {
                             if (sessions != null) {
-                                Set<Map.Entry<String, SqlSession>> entries = sessions.entrySet();
-                                for (Map.Entry<String, SqlSession> entry : entries) {
-                                    SqlSession session = entry.getValue();
-                                    session.commit();
-                                    boolean sessionIsClosed = session.getConnection().isClosed();
-                                    logger.info(entry.getKey() + " session is closed: " + sessionIsClosed);
-                                    session.close();
+                                Set<Map.Entry<String, S>> entries = sessions.entrySet();
+                                for (Map.Entry<String, S> entry : entries) {
+                                    S session = entry.getValue();
+                                    commit(session);
                                 }
                             }
                             zookeeper.close();
@@ -69,13 +68,10 @@ public class ZookeeperTx {
                             return;
                         } else if (TxStatus.ERROR.value.equals(nodeData)) {
                             if (sessions != null) {
-                                Set<Map.Entry<String, SqlSession>> entries = sessions.entrySet();
-                                for (Map.Entry<String, SqlSession> entry : entries) {
-                                    SqlSession session = entry.getValue();
-                                    session.rollback();
-                                    boolean sessionIsClosed = session.getConnection().isClosed();
-                                    logger.info(entry.getKey() + " session is closed: " + sessionIsClosed);
-                                    session.close();
+                                Set<Map.Entry<String, S>> entries = sessions.entrySet();
+                                for (Map.Entry<String, S> entry : entries) {
+                                    S session = entry.getValue();
+                                    rollback(session);
                                 }
                             }
                             zookeeper.close();
@@ -130,5 +126,9 @@ public class ZookeeperTx {
         }
 
     }
+
+    public abstract void commit(S session);
+
+    public abstract void rollback(S session);
 
 }

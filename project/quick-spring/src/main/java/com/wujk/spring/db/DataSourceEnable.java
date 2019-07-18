@@ -5,7 +5,7 @@ import org.springframework.stereotype.Component;
 import java.lang.annotation.*;
 
 @Component
-@Target({ElementType.METHOD, ElementType.TYPE})
+@Target({ElementType.METHOD})
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
 public @interface DataSourceEnable {
