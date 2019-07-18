@@ -1,8 +1,9 @@
 package com.wujk.zookeeper.util;
 
-import org.apache.log4j.Logger;
 import org.apache.zookeeper.*;
 import org.apache.zookeeper.data.Stat;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 import java.util.TreeSet;
@@ -10,7 +11,7 @@ import java.util.concurrent.CountDownLatch;
 
 public class ZookeeperLock {
 
-    private final Logger logger = Logger.getLogger(ZookeeperLock.class);
+    private Logger logger = LoggerFactory.getLogger(ZookeeperLock.class);
 
     /**
      * 重试时间
@@ -21,6 +22,8 @@ public class ZookeeperLock {
      * 锁的后缀
      */
     private static final String LOCK_SUFFIX = "/_zookeeper_lock";
+
+    private String group;
 
     /**
      * 锁的key
@@ -46,16 +49,33 @@ public class ZookeeperLock {
 
     private ZooKeeper zookeeper;
 
-    private CountDownLatch lantch = new CountDownLatch(1);
+    private CountDownLatch lantch;
 
     private CountDownLatch lantchWatcher;
 
     private Watcher watcher = new LockWatcher();
 
+    private String address;
+
     public ZookeeperLock(String address, String lockKey) {
-        this.lockKey = lockKey;
+        this(address, LOCK_SUFFIX, lockKey);
+    }
+
+    public ZookeeperLock(String address,String group, String lockKey) {
+        if (lockKey.startsWith("/")) {
+            this.lockKey = lockKey;
+        } else {
+            this.lockKey = "/".concat(lockKey);
+        }
+        if (group.startsWith("/")) {
+            this.group = LOCK_SUFFIX.concat(group);
+        } else {
+            this.group = LOCK_SUFFIX.concat("/").concat(group);
+        }
+        this.address = address;
         try {
             logger.info("zookeeper初始化");
+            lantch = new CountDownLatch(1);
             zookeeper = new ZooKeeper(address, SESSION_TIMEOUT, watcher);
             lantch.await();
         } catch (Exception e) {
@@ -70,15 +90,18 @@ public class ZookeeperLock {
             if (event.getState() == Event.KeeperState.SyncConnected) {
                 logger.info("zookeeper连接成功");
                 try {
-                    lantch.countDown();
                     Stat stat = zookeeper.exists(LOCK_SUFFIX, false);
                     if (stat == null) {
                         zookeeper.create(LOCK_SUFFIX, null, ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT);
                     }
-
+                    Stat groupNode = zookeeper.exists(group, false);
+                    if (groupNode == null) {
+                        zookeeper.create(group, null, ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT);
+                    }
                 } catch (Exception e) {
                     logger.error(e.getMessage(), e);
                 }
+                lantch.countDown();
             }
             if (event.getType() == Event.EventType.NodeDeleted) {
                 try {
@@ -99,7 +122,7 @@ public class ZookeeperLock {
 
     public boolean tryLock(int TimeOut) {
         try {
-            lockName = zookeeper.create(LOCK_SUFFIX.concat(lockKey), null, ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.EPHEMERAL_SEQUENTIAL);
+            lockName = zookeeper.create(group.concat(lockKey), null, ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.EPHEMERAL_SEQUENTIAL);
             while (!locked && TimeOut > 0) {
                 locked = getLocked(false);
                 Thread.sleep(DEFAULT_ACQUIRY_RETRY_MILLIS);
@@ -114,9 +137,10 @@ public class ZookeeperLock {
     public boolean lockWatcher() {
         try {
             lantchWatcher = new CountDownLatch(1);
-            lockName = zookeeper.create(LOCK_SUFFIX.concat(lockKey), null, ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.EPHEMERAL_SEQUENTIAL);
+            lockName = zookeeper.create(group.concat(lockKey), null, ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.EPHEMERAL_SEQUENTIAL);
             String minNode = getMinNode();
-            minNode = LOCK_SUFFIX.concat("/").concat(minNode);
+            minNode = group.concat("/").concat(minNode);
+            logger.info("当前节点" + lockName + ",当前最小节点监听1：" + minNode);
             if (lockName.equals(minNode)) {
                 logger.info("获取锁成功：" + lockName);
                 System.out.println("获取锁成功：" + lockName);
@@ -133,7 +157,8 @@ public class ZookeeperLock {
 
     private boolean getLocked(boolean needWatcher) throws KeeperException, InterruptedException {
         String minNode = getMinNode();
-        minNode = LOCK_SUFFIX.concat("/").concat(minNode);
+        minNode = group.concat("/").concat(minNode);
+        logger.info("当前节点" + lockName + "当前最小节点监听2：" + minNode);
         if (lockName.equals(minNode)) {
             logger.info("获取锁成功：" + lockName);
             System.out.println("获取锁成功：" + lockName);
@@ -146,7 +171,7 @@ public class ZookeeperLock {
     }
 
     private String getMinNode() throws KeeperException, InterruptedException {
-        List<String> childrens = zookeeper.getChildren(LOCK_SUFFIX, false);
+        List<String> childrens = zookeeper.getChildren(group, false);
         if (childrens != null && childrens.size() > 0) {
             TreeSet<String> sortNode = new TreeSet<>(childrens);
             return sortNode.first();
@@ -161,6 +186,21 @@ public class ZookeeperLock {
             locked = false;
             zookeeper.close();
         } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+        }
+    }
+
+    public void destory() {
+        try {
+            lantch = new CountDownLatch(1);
+            zookeeper = new ZooKeeper(address, SESSION_TIMEOUT, watcher);
+            lantch.await();
+            if(zookeeper.exists(group, false) != null) {
+                zookeeper.delete(group, -1);
+            }
+            zookeeper.close();
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
         }
     }
 
@@ -170,7 +210,7 @@ public class ZookeeperLock {
             new Thread(new Runnable() {
                 @Override
                 public void run() {
-                    ZookeeperLock lock = new ZookeeperLock("127.0.0.1:2181", "/lock");
+                    ZookeeperLock lock = new ZookeeperLock("127.0.0.1:2181",  "1112350010911110", "/lock");
                     if (lock.lockWatcher()) {
                         try {
                             Thread.sleep(1000);
