@@ -36,7 +36,7 @@ public class TransactionAop extends dbAop {
     }
 
     @Around("transactional()")
-    public Object beforeInsertMethods(ProceedingJoinPoint pjp) {
+    public Object tx(ProceedingJoinPoint pjp) {
         try {
             AtomikosEnable atomikosEnable = ((MethodSignature)pjp.getSignature()).getMethod().getAnnotation(AtomikosEnable.class);
             String transactionManagerName = atomikosEnable.transactionManagerName();

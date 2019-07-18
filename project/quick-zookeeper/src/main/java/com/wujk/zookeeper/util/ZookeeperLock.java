@@ -61,7 +61,7 @@ public class ZookeeperLock {
         this(address, LOCK_SUFFIX, lockKey);
     }
 
-    public ZookeeperLock(String address,String group, String lockKey) {
+    public ZookeeperLock(String address, String group, String lockKey) {
         if (lockKey.startsWith("/")) {
             this.lockKey = lockKey;
         } else {
@@ -140,7 +140,7 @@ public class ZookeeperLock {
             lockName = zookeeper.create(group.concat(lockKey), null, ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.EPHEMERAL_SEQUENTIAL);
             String minNode = getMinNode();
             minNode = group.concat("/").concat(minNode);
-            logger.info("当前节点" + lockName + ",当前最小节点监听1：" + minNode);
+            logger.info("当前节点" + lockName + ", 当前最小节点监听1：" + minNode);
             if (lockName.equals(minNode)) {
                 logger.info("获取锁成功：" + lockName);
                 System.out.println("获取锁成功：" + lockName);
@@ -158,7 +158,7 @@ public class ZookeeperLock {
     private boolean getLocked(boolean needWatcher) throws KeeperException, InterruptedException {
         String minNode = getMinNode();
         minNode = group.concat("/").concat(minNode);
-        logger.info("当前节点" + lockName + "当前最小节点监听2：" + minNode);
+        logger.info("当前节点" + lockName + ", 当前最小节点监听2：" + minNode);
         if (lockName.equals(minNode)) {
             logger.info("获取锁成功：" + lockName);
             System.out.println("获取锁成功：" + lockName);
@@ -198,10 +198,14 @@ public class ZookeeperLock {
             if(zookeeper.exists(group, false) != null) {
                 zookeeper.delete(group, -1);
             }
-            zookeeper.close();
+            unlock();
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
         }
+    }
+
+    public String getGroup() {
+        return group;
     }
 
     public static void main(String[] args) throws InterruptedException {
@@ -210,7 +214,7 @@ public class ZookeeperLock {
             new Thread(new Runnable() {
                 @Override
                 public void run() {
-                    ZookeeperLock lock = new ZookeeperLock("127.0.0.1:2181",  "1112350010911110", "/lock");
+                    ZookeeperLock lock = new ZookeeperLock("127.0.0.1:2181",  "31112350010911110", "/lock");
                     if (lock.lockWatcher()) {
                         try {
                             Thread.sleep(1000);
