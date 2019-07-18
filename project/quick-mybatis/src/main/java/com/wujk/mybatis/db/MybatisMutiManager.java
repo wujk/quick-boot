@@ -1,8 +1,8 @@
 package com.wujk.mybatis.db;
 
 import com.alibaba.druid.pool.xa.DruidXADataSource;
-import com.wujk.db.DataBase;
-import com.wujk.db.DataBaseManager;
+import com.wujk.spring.db.DataBase;
+import com.wujk.spring.db.DataBaseManager;
 import com.wujk.utils.pojo.ObjectUtil;
 import org.apache.ibatis.plugin.Interceptor;
 import org.apache.ibatis.session.SqlSession;
@@ -77,13 +77,17 @@ public class MybatisMutiManager extends DataBaseManager<SqlSessionFactory, SqlSe
 
     @Override
     public void closeSessionFactory(SqlSessionFactory sessionFactory) {
-        DruidXADataSource source = (DruidXADataSource) sessionFactory.getConfiguration().getEnvironment().getDataSource();
+        DruidXADataSource source = (DruidXADataSource)getDataSource(sessionFactory);
         logger.info("activeCount:" + source.getActiveCount());
         if (source != null && source.getActiveCount() <= 0) {
             logger.info("删除数据源：" + source.getUrl());
             source.close();
             source = null;
         }
+    }
+
+    public Object getDataSource(SqlSessionFactory sessionFactory) {
+        return sessionFactory.getConfiguration().getEnvironment().getDataSource();
     }
 
     @Override

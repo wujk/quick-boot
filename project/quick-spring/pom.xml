@@ -273,11 +273,5 @@
 			<artifactId>quick-zookeeper</artifactId>
 			<version>${utils.version}</version>
 		</dependency>
-		<dependency>
-			<groupId>com.wujk</groupId>
-			<artifactId>quick-mybatis</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
-			<scope>compile</scope>
-		</dependency>
 	</dependencies>
 </project>

@@ -1,14 +1,14 @@
 package com.wujk.mybatis.db;
 
 import com.atomikos.jdbc.AtomikosDataSourceBean;
-import com.wujk.db.DataBase;
-import com.wujk.db.DataBaseManager;
+import com.wujk.spring.db.DataBase;
+import com.wujk.spring.db.DataBaseManager;
+import org.apache.ibatis.session.SqlSessionFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.sql.DataSource;
 import javax.sql.XADataSource;
-import java.sql.SQLException;
 import java.util.List;
 import java.util.UUID;
 
@@ -39,6 +39,11 @@ public class MybatisMutiXAManager extends MybatisMutiManager {
         atomikosDataSourceBean.setXaDataSource(xaDataSource);
         atomikosDataSourceBean.setUniqueResourceName(UUID.randomUUID().toString());
         return atomikosDataSourceBean;
+    }
+
+    @Override
+    public Object getDataSource(SqlSessionFactory sessionFactory) {
+        return ((AtomikosDataSourceBean) sessionFactory.getConfiguration().getEnvironment().getDataSource()).getXaDataSource();
     }
 
 }
